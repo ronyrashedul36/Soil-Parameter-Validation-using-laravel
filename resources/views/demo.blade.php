@@ -1,4 +1,4 @@
-@include('developer');
+@include('developer')
 
 <!DOCTYPE html>
 <html lang="en">
@@ -70,7 +70,7 @@
 
 <body>
 
-    <div class="container">
+    <!-- <div class="container">
         <div class="row">
 
             <div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 10px; display: flex; justify-content: flex-end;">
@@ -84,9 +84,11 @@
 
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <div class="container mt-5">
+    @include('header')
+
+    <div class="container mt-2">
         <!-- <div class="text-center">
             <a class="btn btn-success" href="/soilvalidation">Soil Validation</a>
             <a class="btn btn-success" href="/inputform">Upload Upazila Nirdesika</a>
@@ -113,7 +115,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
-                                <a class="dropdown-item" href="/soilvalidation">Soil Data Entry</a>
+                                <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
                                 <a class="dropdown-item" href="/soilchemicaldata">Report</a>
                                 <a class="dropdown-item" href="#">Download</a>
                             </div>
@@ -197,6 +199,8 @@
             </table>
         </div>
     </div>
+
+    @include('institutionlogo')
 
     <footer>
         <span class="small"> Copyright &copy;

@@ -1,4 +1,4 @@
-@include('developer');
+@include('developer')
 <!DOCTYPE html>
 <html lang="en">
 
@@ -97,8 +97,8 @@
 </head>
 
 <body>
-
-    <div class="container">
+@include('header')
+    <!-- <div class="container">
         <div class="row">
             <div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 10px; display: flex; justify-content: flex-end;">
                 <img src="http://apps.barc.gov.bd/flipbook/flipbook/images/barc-logo.png" width="100" height="100" alt="">
@@ -110,9 +110,9 @@
             <div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: 10px; display: flex; justify-content: flex-end; align-items: left;">
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <div class="container mt-5">
+    <div class="container mt-2">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
                 <!-- Navbar Toggler for Mobile View -->
@@ -132,7 +132,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
-                                <a class="dropdown-item" href="/soilvalidation">Soil Data Entry</a>
+                                <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
                                 <a class="dropdown-item" href="/soilchemicaldata">Report</a>
                                 <a class="dropdown-item" href="#">Download</a>
                             </div>
@@ -270,6 +270,8 @@
         </div>
 
     </div>
+
+    @include('institutionlogo')
 
     <footer>
         <span class="small"> Copyright &copy;

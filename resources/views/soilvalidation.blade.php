@@ -1,4 +1,4 @@
-@include('developer');
+@include('developer')
 <!DOCTYPE html>
 <html lang="en">
 
@@ -97,20 +97,9 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 10px; display: flex; justify-content: flex-end;">
-                <img src="http://apps.barc.gov.bd/flipbook/flipbook/images/barc-logo.png" width="100" height="100" alt="">
-            </div>
-            <div class="col-lg-9 col-md-9 col-sm-9 text-center" style="margin-top: 20px;">
-                <h2>Bangladesh Agricultural Research Council (BARC)</h2>
-                <h3>New Airport Road, Farmgate, Dhaka - 1215</h3>
-            </div>
-        </div>
 
-    </div>
-
-    <div class="container mt-5">
+    @include('header')
+    <div class="container mt-2">
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
@@ -133,7 +122,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
-                                <a class="dropdown-item" href="/soilvalidation">Soil Data Entry</a>
+                                <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
                                 <a class="dropdown-item" href="/soilchemicaldata">Report</a>
                                 <a class="dropdown-item" href="#">Download</a>
                             </div>
@@ -274,108 +263,7 @@
                     <label for="year" class="form-label">Year <span style="color:red">*</span></label>
                     <input type="number" class="form-control" id="year" name="year" min="1900" max="2500" step="1" required>
                 </div>
-                <div class="col-md-4">
-                    <label for="fid" class="form-label">FID</label>
-                    <input type="text" class="form-control" id="fid" name="fid">
-                </div>
-                <div class="col-md-4">
-                    <label for="smpl_no" class="form-label">Sample No</label>
-                    <input type="text" class="form-control" id="smpl_no" name="smpl_no">
-                </div>
-                <div class="col-md-4">
-                    <label for="mu" class="form-label">MU</label>
-                    <input type="text" class="form-control" id="mu" name="mu">
-                </div>
-                <div class="col-md-4">
-                    <label for="land_type" class="form-label">Land Type</label>
-                    <input type="text" class="form-control" id="land_type" name="land_type">
-                </div>
-                <div class="col-md-4">
-                    <label for="soil_series" class="form-label">Soil Series</label>
-                    <input type="text" class="form-control" id="soil_series" name="soil_series">
-                </div>
-                <div class="col-md-4">
-                    <label for="soil_group" class="form-label">Soil Group</label>
-                    <input type="text" class="form-control" id="soil_group" name="soil_group">
-                </div>
-                <div class="col-md-4">
-                    <label for="texture" class="form-label">Texture</label>
-                    <input type="text" class="form-control" id="texture" name="texture">
-                </div>
-                <div class="col-md-4">
-                    <label for="ec" class="form-label">EC</label>
-                    <input type="text" class="form-control" id="ec" name="ec">
-                </div>
-                <div class="col-md-4">
-                    <label for="ph" class="form-label">pH</label>
-                    <input type="text" class="form-control" id="ph" name="ph">
-                </div>
-                <div class="col-md-4">
-                    <label for="ea" class="form-label">EA</label>
-                    <input type="text" class="form-control" id="ea" name="ea">
-                </div>
-                <div class="col-md-4">
-                    <label for="om" class="form-label">OM</label>
-                    <input type="text" class="form-control" id="om" name="om">
-                </div>
-                <div class="col-md-4">
-                    <label for="n" class="form-label">N</label>
-                    <input type="text" class="form-control" id="n" name="n">
-                </div>
-                <div class="col-md-4">
-                    <label for="po" class="form-label">Po</label>
-                    <input type="text" class="form-control" id="po" name="po">
-                </div>
-                <div class="col-md-4">
-                    <label for="pb" class="form-label">Pb</label>
-                    <input type="text" class="form-control" id="pb" name="pb">
-                </div>
-                <div class="col-md-4">
-                    <label for="k" class="form-label">K</label>
-                    <input type="text" class="form-control" id="k" name="k">
-                </div>
-                <div class="col-md-4">
-                    <label for="s" class="form-label">S</label>
-                    <input type="text" class="form-control" id="s" name="s">
-                </div>
-                <div class="col-md-4">
-                    <label for="zn" class="form-label">Zn</label>
-                    <input type="text" class="form-control" id="zn" name="zn">
-                </div>
-                <div class="col-md-4">
-                    <label for="b" class="form-label">B</label>
-                    <input type="text" class="form-control" id="b" name="b">
-                </div>
-                <div class="col-md-4">
-                    <label for="ca" class="form-label">Ca</label>
-                    <input type="text" class="form-control" id="ca" name="ca">
-                </div>
-                <div class="col-md-4">
-                    <label for="mg" class="form-label">Mg</label>
-                    <input type="text" class="form-control" id="mg" name="mg">
-                </div>
-                <div class="col-md-4">
-                    <label for="cu" class="form-label">Cu</label>
-                    <input type="text" class="form-control" id="cu" name="cu">
-                </div>
-                <div class="col-md-4">
-                    <label for="fe" class="form-label">Fe</label>
-                    <input type="text" class="form-control" id="fe" name="fe">
-                </div>
-                <div class="col-md-4">
-                    <label for="mn" class="form-label">Mn</label>
-                    <input type="text" class="form-control" id="mn" name="mn">
-                </div>
-                <div class="col-md-4">
-                    <label for="upz_code" class="form-label">Upazila Code</label>
-                    <input type="text" class="form-control" id="upz_code" name="upz_code">
-                </div>
                 <div class="d-flex align-items-center col-md-5">
-                    <div class="col-md-2">
-                        <label for="upz_code" class="form-label"></label>
-                        <p class="mb-0 text-center">OR</p>
-                    </div>
-
                     <div class="col-md-10">
                         <label for="upz_code" class="form-label">Upload Excel file</label>
                         <input type="file" class="form-control-file" id="excel" name="excel" accept=".xls|.xlsx">
@@ -387,6 +275,8 @@
             <button type="submit" class="btn btn-primary mt-4 mb-4">Submit</button>
         </form>
     </div>
+
+    @include('institutionlogo')
 
     <footer>
         <span class="small">
@@ -564,7 +454,6 @@
                 }, 5000); // 5000 milliseconds = 5 seconds
             }
         });
-
     </script>
 </body>
 

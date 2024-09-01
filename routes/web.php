@@ -46,6 +46,10 @@ Route::get('/soilvalidation', function(){
     return view('soilvalidation');
 });
 
+Route::get('/soilsinglerowdataentry', function(){
+    return view('soilsinglerowdataentry');
+});
+
 
 
 

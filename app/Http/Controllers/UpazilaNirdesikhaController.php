@@ -56,6 +56,7 @@ class UpazilaNirdesikhaController extends Controller
         return view('/soilchemicaldata', compact('data'));
     }
 
+
     public function download(Request $request, $FilePath)
     {
         return response()->download(public_path('assets/' . $FilePath));
