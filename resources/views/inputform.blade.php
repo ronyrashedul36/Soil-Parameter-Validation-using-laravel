@@ -102,9 +102,8 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
                                 <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
-                                <a class="dropdown-item" href="/soilchemicaldata">Report</a>
-                                <a class="dropdown-item" href="#">Download</a>
-                            </div>
+                                <a class="dropdown-item" href="/soilchemicaldata">Soil Chemical Data</a>
+                                <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                         </li>
 
                         <li class="nav-item dropdown">
@@ -213,9 +212,10 @@
         </form>
     </div>
 
+
     @include('institutionlogo')
-    
-    <footer>
+
+    <!-- <footer>
         <span class="small"> Copyright &copy;
             <script>
                 document.write(new Date().getFullYear())
@@ -223,7 +223,7 @@
             <br>
             Developed and maintained by Computer and GIS unit, Bangladesh Agricultural Research Council.
         </span>
-    </footer>
+    </footer> -->
     <script type="text/javascript">
         $(document).ready(function() {
             // Store districts and upazilas as arrays within an object

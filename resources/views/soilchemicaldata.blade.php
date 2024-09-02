@@ -26,7 +26,7 @@
             padding: 0;
         }
 
-        footer {
+         footer {
             background: #111;
             padding: 10px;
             text-align: center;
@@ -34,7 +34,7 @@
             font-size: 20px;
             margin-top: auto;
             width: 100%;
-        }
+        } 
 
         .flex-container {
             display: flex;
@@ -133,8 +133,8 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
                                 <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
-                                <a class="dropdown-item" href="/soilchemicaldata">Report</a>
-                                <a class="dropdown-item" href="#">Download</a>
+                                <a class="dropdown-item" href="/soilchemicaldata">Soil Chemical Data</a>
+                                <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                             </div>
                         </li>
 
@@ -273,15 +273,7 @@
 
     @include('institutionlogo')
 
-    <footer>
-        <span class="small"> Copyright &copy;
-            <script>
-                document.write(new Date().getFullYear())
-            </script>, Bangladesh Agricultural Research Council.
-            <br>
-            Developed and maintained by Computer and GIS unit, Bangladesh Agricultural Research Council.
-        </span>
-    </footer>
+
 
     <script>
         $(document).ready(function() {

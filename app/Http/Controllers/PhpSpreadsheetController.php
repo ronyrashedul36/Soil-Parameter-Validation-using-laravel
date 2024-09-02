@@ -10,216 +10,200 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use App\Models\SoilData;
+use App\Exports\SoilDataExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class PhpSpreadsheetController extends Controller
 {
-    // public function upload(Request $request)
+
+    // public function download(Request $request)
     // {
-    //     $request->validate([
-    //         'excel_file' => 'required|file|mimes:xlsx,xls'
-    //     ]);
+    //     $division = $request->input('division');
+    //     $district = $request->input('district');
+    //     $upazila = $request->input('upazila');
+    //     $year = $request->input('year');
 
-    //     $file = $request->file('excel_file');
-    //     $filePath = $file->getPathname();
+    //     // Query the database based on the filter criteria
+    //     $query = \App\Models\SoilData::query();
 
-    //     try {
-    //         $spreadsheet = IOFactory::load($filePath);
-    //         $worksheet = $spreadsheet->getActiveSheet();
-
-    //         // Color all cells
-    //         $highestRow = $worksheet->getHighestRow();
-    //         $highestColumn = $worksheet->getHighestColumn();
-    //         $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
-
-
-    //         for ($row = 2; $row <= $highestRow; $row++) {
-    //             for ($col = 1; $col <= $highestColumnIndex; $col++) {
-    //                 $cell = $worksheet->getCellByColumnAndRow($col, $row);
-    //                 $cell->getStyle()->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_NONE);
-    //             }
-    //         }
-
-    //         // Array to keep track of values in the second column and their occurrences
-    //         $sampleNumbers = [];
-
-    //         // First pass: identify duplicates
-    //         for ($row = 2; $row <= $highestRow; $row++) {
-    //             $cell = $worksheet->getCellByColumnAndRow(2, $row);
-    //             $cellValue = $cell->getValue();
-    //             if (!isset($sampleNumbers[$cellValue])) {
-    //                 $sampleNumbers[$cellValue] = 0;
-    //             }
-    //             $sampleNumbers[$cellValue]++;
-    //         }
-
-
-    //         for ($row = 2; $row <= $highestRow; $row++) {
-    //             for ($col = 1; $col <= $highestColumnIndex; $col++) {
-    //                 $cell = $worksheet->getCellByColumnAndRow($col, $row);
-    //                 $cellValue = $cell->getValue();
-
-    //                 if ($cellValue === null) {
-    //                     continue;
-    //                 }
-
-    //                 // Duplicate Sample Number
-    //                 if ($col == 2) {
-    //                     if ($sampleNumbers[$cellValue] > 1) {
-    //                         // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         //     ->getStartColor()->setARGB(Color::COLOR_RED);
-
-    //                         $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                             ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-
-    //                     }
-    //                 }
-
-    //                 // Land Type
-    //                 if ($col == 4) {
-    //                     $cellValueLower = strtolower($cellValue);
-    //                     $allowedValues = ["hl", "mhl", "mll", "vll"];
-    //                     if (!in_array($cellValueLower, $allowedValues)) {
-    //                         // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         //     ->getStartColor()->setARGB(Color::COLOR_RED);
-
-    //                         $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                             ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                     } else {
-    //                         // land type == hl s < 0 || s > 50
-    //                         // land type == vll s < 0 || s > 400
-    //                         if ($cellValueLower == "hl" || $cellValueLower == "vll") {
-    //                             $specificCell = $worksheet->getCellByColumnAndRow(16, $row);
-    //                             $specificValue = $specificCell->getValue();
-
-    //                             if (($cellValueLower == "hl" && ($specificValue < 0 || $specificValue > 50)) ||
-    //                                 ($cellValueLower == "vll" && ($specificValue < 0 || $specificValue > 400))
-    //                             ) {
-    //                                 // $specificCell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                                 //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                                 $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                                     ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-
-
-    //                 // Texture
-    //                 if ($col == 7) {
-    //                     $cellValueLower = strtolower($cellValue);
-    //                     $allowedValues = ["sand", "sandyloam", "sandy loam", "loam", "clayloam", "clay loam", "clay"];
-    //                     if (!in_array($cellValueLower, $allowedValues)) {
-    //                         // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                         $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                             ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                     }
-    //                 }
-
-    //                 // EC
-    //                 if ($col == 8 && $cellValue == 0) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-
-    //                 // pH
-    //                 if ($col == 9 && ($cellValue < 3 || $cellValue > 9)) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-
-    //                 // N
-    //                 if ($col == 12 && ($cellValue < 0 || $cellValue > 1)) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-
-    //                 // K
-    //                 if ($col == 15 && ($cellValue < 0 || $cellValue > 1)) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-
-    //                 //S
-    //                 if ($col == 16 && $cellValue == 0) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-
-    //                 // Ca
-    //                 if ($col == 19 && ($cellValue < 0 || $cellValue > 50)) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-
-    //                 // Mg
-    //                 if ($col == 20 && ($cellValue < 0 || $cellValue > 15)) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-
-    //                 // Ca > Mg
-    //                 if ($col == 19) {
-    //                     $cellMg = $worksheet->getCellByColumnAndRow($col + 1, $row);
-    //                     $cellValueMg = $cellMg->getValue();
-    //                     if ($cellValue < $cellValueMg) {
-    //                         // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                         // $cellMg->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         //     ->getStartColor()->setARGB(Color::COLOR_RED);
-
-
-    //                         $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                             ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-
-    //                         $cellMg->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                             ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                     }
-    //                 }
-
-    //                 // Zn
-    //                 if ($col == 17 && ($cellValue < 0 || $cellValue > 15)) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-
-    //                 }
-
-    //                 // B
-    //                 if ($col == 18 && ($cellValue < 0 || $cellValue > 4)) {
-    //                     // $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                     //     ->getStartColor()->setARGB(Color::COLOR_RED);
-    //                     $cell->getStyle()->getFill()->setFillType(Fill::FILL_SOLID)
-    //                         ->getStartColor()->setARGB('FFFFCCCC'); // Light red color
-    //                 }
-    //             }
-    //         }
-
-    //         // Save the modified file
-    //         $writer = new Xlsx($spreadsheet);
-    //         $outputFilePath = storage_path('app/public/Validated_file(C&GIS).xlsx');
-    //         $writer->save($outputFilePath);
-
-    //         return response()->download($outputFilePath)->deleteFileAfterSend(true);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Unable to read the file: ' . $e->getMessage()], 500);
+    //     if ($division) {
+    //         $query->where('division', $division);
     //     }
+    //     if ($district) {
+    //         $query->where('district', $district);
+    //     }
+    //     if ($upazila) {
+    //         $query->where('upazila', $upazila);
+    //     }
+    //     if ($year) {
+    //         $query->where('year', $year);
+    //     }
+
+    //     $data = $query->get();
+
+    //     // Generate CSV content
+    //     $csvFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
+    //     $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
+
+    //     // Return the response with the CSV file
+    //     return response()->stream(
+    //         function () use ($data, $headers) {
+    //             $handle = fopen('php://output', 'w');
+
+    //             // Handle fopen failure
+    //             if ($handle === false) {
+    //                 return response()->json(['error' => 'Could not open output stream'], 500);
+    //             }
+
+    //             // Add the headers
+    //             fputcsv($handle, $headers);
+
+    //             // Add the data rows
+    //             foreach ($data as $row) {
+    //                 fputcsv($handle, [
+    //                     $row->division, $row->district, $row->upazila, $row->fid, $row->smpl_no, $row->mu, $row->land_type,
+    //                     $row->soil_series, $row->soil_group, $row->texture, $row->ec, $row->ph, $row->ea, $row->om, $row->n,
+    //                     $row->po, $row->pb, $row->k, $row->s, $row->zn, $row->b, $row->ca, $row->mg, $row->cu, $row->fe,
+    //                     $row->mn, $row->upz_code, $row->year
+    //                 ]);
+    //             }
+
+    //             fclose($handle);
+    //         },
+    //         200,
+    //         [
+    //             'Content-Type' => 'text/csv',
+    //             'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
+    //         ]
+    //     );
     // }
+
+    public function download(Request $request)
+    {
+        $division = $request->input('division');
+        $district = $request->input('district');
+        $upazila = $request->input('upazila');
+        $year = $request->input('year');
+
+        dd($division);
+
+        // Query the database based on the filter criteria
+        $query = \App\Models\SoilData::query();
+
+        if ($division) {
+            $query->where('division', $division);
+        }
+        if ($district) {
+            $query->where('district', $district);
+        }
+        if ($upazila) {
+            $query->where('upazila', $upazila);
+        }
+        if ($year) {
+            $query->where('year', $year);
+        }
+
+        $data = $query->get();
+
+        // Generate Excel file content
+        $excelFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.xlsx';
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
+        $sheet->fromArray($headers, NULL, 'A1');
+
+        $rows = [];
+        foreach ($data as $row) {
+            $rows[] = [
+                $row->division,
+                $row->district,
+                $row->upazila,
+                $row->fid,
+                $row->smpl_no,
+                $row->mu,
+                $row->land_type,
+                $row->soil_series,
+                $row->soil_group,
+                $row->texture,
+                $row->ec,
+                $row->ph,
+                $row->ea,
+                $row->om,
+                $row->n,
+                $row->po,
+                $row->pb,
+                $row->k,
+                $row->s,
+                $row->zn,
+                $row->b,
+                $row->ca,
+                $row->mg,
+                $row->cu,
+                $row->fe,
+                $row->mn,
+                $row->upz_code,
+                $row->year
+            ];
+        }
+        $sheet->fromArray($rows, NULL, 'A2');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        // Return the response with the Excel file
+        return response()->stream(
+            function () use ($writer) {
+                $writer->save('php://output');
+            },
+            200,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $excelFileName . '"',
+            ]
+        );
+    }
+
+
+    public function retrieveData(Request $request)
+    {
+        $validatedData = $request->validate([
+            'division' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'upazila' => 'nullable|string|max:255',
+            'year' => 'nullable|numeric',
+        ]);
+        $query = \App\Models\SoilData::query();
+        // Apply filters based on the validated data
+        if (!empty($validatedData['division'])) {
+            $query->where('division', $validatedData['division']);
+        }
+
+        if (!empty($validatedData['district'])) {
+            $query->where('district', $validatedData['district']);
+        }
+
+        if (!empty($validatedData['upazila'])) {
+            $query->where('upazila', $validatedData['upazila']);
+        }
+
+        if (!empty($validatedData['year'])) {
+            $query->where('year', $validatedData['year']);
+        }
+
+        // Execute the query and get the results
+        $results = $query->get();
+        // dd($results);
+        if (!$results->isEmpty()) {
+            return redirect()->back()->with('success', 'Soil Data Found!');
+        } else {
+            return redirect()->back()->with('success', 'No Soil Data found for the provided criteria.');
+        }
+
+        // Return the results, for example, as a JSON response
+        return response()->json($results);
+    }
 
     public function processFile(Request $request)
     {

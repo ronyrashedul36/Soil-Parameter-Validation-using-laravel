@@ -123,8 +123,8 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
                                 <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
-                                <a class="dropdown-item" href="/soilchemicaldata">Report</a>
-                                <a class="dropdown-item" href="#">Download</a>
+                                <a class="dropdown-item" href="/soilchemicaldata">Soil Chemical Data</a>
+                                <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                             </div>
                         </li>
 
@@ -278,7 +278,7 @@
 
     @include('institutionlogo')
 
-    <footer>
+    <!-- <footer>
         <span class="small">
             Copyright &copy; <script>
                 document.write(new Date().getFullYear())
@@ -286,7 +286,7 @@
             Bangladesh Agricultural Research Council.<br>
             Developed and maintained by Computer and GIS unit, Bangladesh Agricultural Research Council.
         </span>
-    </footer>
+    </footer> -->
 
     <script>
         document.getElementById('uploadForm1').addEventListener('submit', function(event) {

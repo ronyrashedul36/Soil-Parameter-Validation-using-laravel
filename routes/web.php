@@ -29,8 +29,18 @@ Route::get('/downloadFile', [PhpSpreadsheetController::class, 'downloadFile'])->
 
 Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'storeSoilData'])->name('PhpSpreadsheetController.storeSoilData');
 
+Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'retrieveData'])->name('PhpSpreadsheetController.retrieveData');
+
+Route::get('/download', [PhpSpreadsheetController::class, 'download'])->name('PhpSpreadsheetController.download');
+
+
+
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');
+});
+
+Route::get('/reportofsoilchemicaldata', function() {
+return view('/reportofsoilchemicaldata');
 });
 
 

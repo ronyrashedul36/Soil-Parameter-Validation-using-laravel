@@ -64,26 +64,21 @@
             width: 100%;
             justify-content: space-around;
         }
+
+        .form-label-custom {
+            font-weight: bold;
+        }
+
+        .form-label {
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 
 <body>
-@include('header')
-    <!-- <div class="container">
-        <div class="row">
 
-            <div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 10px; display: flex; justify-content: flex-end;">
-                <img src="http://apps.barc.gov.bd/flipbook/flipbook/images/barc-logo.png?>" width="100" height="100" alt="">
-            </div>
-            <div class="col-lg-9 col-md-9 col-sm-9 text-center" style="margin-top: 20px;">
-                <h2>Bangladesh Agricultural Research Council (BARC)</h2>
-                <h3>New Airport Road, Farmgate, Dhaka - 1215</h3>
-            </div>
-            <div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: 10px; display: flex; justify-content: flex-end; align-items: left;">
+    @include('header')
 
-            </div>
-        </div>
-    </div> -->
     <div class="container mt-2">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
@@ -143,19 +138,26 @@
             </div>
         </nav>
         <br>
-        <!-- <div>
-            <a href="/demo" class="btn btn-secondary">Home</a>
-        </div> -->
-        <h4 class="mb-4">Edit & Update Soil Chemical Data</h4>
-        <form action="{{url('update_soilchemicaldata/'. $data->id)}}" method="post" enctype="multipart/form-data">
-            @csrf <!-- CSRF token -->
-            @method('PUT')
 
+
+        @if(Session::has('success'))
+        <div class="alert alert-success" role="alert" id="success-alert">
+            {{ Session::get('success') }}
+        </div>
+        @endif
+
+
+    </div>
+
+    <div class="container mt-2">
+        <h4 class="form-label-custom mb-4">Report</h4>
+        <form action="{{ route('PhpSpreadsheetController.retrieveData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
+            @csrf
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label for="division" class="form-label">Division <span style="color:red">*</span></label>
-                    <select class="form-select" id="division" name="division" required>
-                        <option value="{{$data->division}}">{{$data->division}}</option>
+                    <label for="division" class="form-label">Division </label>
+                    <select class="form-select" id="division" name="division">
+                        <option value="">Select Division</option>
                         <option value="Dhaka">Dhaka</option>
                         <option value="Chattogram">Chattogram</option>
                         <option value="Khulna">Khulna</option>
@@ -167,138 +169,80 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="district" class="form-label">District <span style="color:red">*</span></label>
-                    <select class="form-select" id="district" name="district" required>
-                        <option value="{{$data->district}}">{{$data->district}}</option>
+                    <label for="district" class="form-label">District </label>
+                    <select class="form-select" id="district" name="district">
+                        <option value="">Select District</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="upazila" class="form-label">Upazila <span style="color:red">*</span></label>
-                    <select class="form-select" id="upazila" name="upazila" required>
-                        <option value="{{$data->upazila}}">{{$data->upazila}}</option>
+                    <label for="upazila" class="form-label">Upazila </label>
+                    <select class="form-select" id="upazila" name="upazila">
+                        <option value="">Select Upazila</option>
                     </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="year" class="form-label">Year <span style="color:red">*</span></label>
-                    <input type="number" class="form-control" id="year" name="year" min="1900" max="2500" step="1" value="{{$data->year}}" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="fid" class="form-label">FID</label>
-                    <input type="text" class="form-control" id="fid" name="fid" value="{{$data->fid}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="smpl_no" class="form-label">Sample No</label>
-                    <input type="text" class="form-control" id="smpl_no" name="smpl_no" value="{{$data->smpl_no}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="mu" class="form-label">MU</label>
-                    <input type="text" class="form-control" id="mu" name="mu" value="{{$data->mu}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="land_type" class="form-label">Land Type</label>
-                    <input type="text" class="form-control" id="land_type" name="land_type" value="{{$data->land_type}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="soil_series" class="form-label">Soil Series</label>
-                    <input type="text" class="form-control" id="soil_series" name="soil_series" value="{{$data->soil_series}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="soil_group" class="form-label">Soil Group</label>
-                    <input type="text" class="form-control" id="soil_group" name="soil_group" value="{{$data->soil_group}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="texture" class="form-label">Texture</label>
-                    <input type="text" class="form-control" id="texture" name="texture" value="{{$data->texture}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="ec" class="form-label">EC</label>
-                    <input type="text" class="form-control" id="ec" name="ec" value="{{$data->ec}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="ph" class="form-label">pH</label>
-                    <input type="text" class="form-control" id="ph" name="ph" value="{{$data->ph}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="ea" class="form-label">EA</label>
-                    <input type="text" class="form-control" id="ea" name="ea" value="{{$data->ea}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="om" class="form-label">OM</label>
-                    <input type="text" class="form-control" id="om" name="om" value="{{$data->om}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="n" class="form-label">N</label>
-                    <input type="text" class="form-control" id="n" name="n" value="{{$data->n}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="po" class="form-label">Po</label>
-                    <input type="text" class="form-control" id="po" name="po" value="{{$data->po}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="pb" class="form-label">Pb</label>
-                    <input type="text" class="form-control" id="pb" name="pb" value="{{$data->pb}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="k" class="form-label">K</label>
-                    <input type="text" class="form-control" id="k" name="k" value="{{$data->k}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="s" class="form-label">S</label>
-                    <input type="text" class="form-control" id="s" name="s" value="{{$data->s}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="zn" class="form-label">Zn</label>
-                    <input type="text" class="form-control" id="zn" name="zn" value="{{$data->zn}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="b" class="form-label">B</label>
-                    <input type="text" class="form-control" id="b" name="b" value="{{$data->b}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="ca" class="form-label">Ca</label>
-                    <input type="text" class="form-control" id="ca" name="ca" value="{{$data->ca}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="mg" class="form-label">Mg</label>
-                    <input type="text" class="form-control" id="mg" name="mg" value="{{$data->mg}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="cu" class="form-label">Cu</label>
-                    <input type="text" class="form-control" id="cu" name="cu" value="{{$data->cu}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="fe" class="form-label">Fe</label>
-                    <input type="text" class="form-control" id="fe" name="fe" value="{{$data->fe}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="mn" class="form-label">Mn</label>
-                    <input type="text" class="form-control" id="mn" name="mn" value="{{$data->mn}}">
-                </div>
-                <div class="col-md-4">
-                    <label for="upz_code" class="form-label">Upazila Code</label>
-                    <input type="text" class="form-control" id="upz_code" name="upz_code" value="{{$data->upz_code}}">
                 </div>
 
+                <div class="col-md-4">
+                    <label for="year" class="form-label">Year </label>
+                    <input type="number" class="form-control" id="year" name="year" min="1900" max="2500" step="1">
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <div class="d-flex justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary mx-2">Search</button>
+                <button type="button" class="btn btn-primary mx-2" onclick="submitFormForDownload()">Download</button>
+            </div>
         </form>
     </div>
 
+    <script>
+        function submitFormForDownload() {
+            // Collect the values from the input fields
+            var division = document.getElementById('division').value;
+            var district = document.getElementById('district').value;
+            var upazila = document.getElementById('upazila').value;
+            var year = document.getElementById('year').value;
+
+            // Create a FormData object to hold the form data
+            var formData = new FormData();
+            formData.append('division', division);
+            formData.append('district', district);
+            formData.append('upazila', upazila);
+            formData.append('year', year);
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
+            // Send an AJAX request to the server
+            fetch('{{ route("PhpSpreadsheetController.download") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Create a link element to trigger the download
+                        var a = document.createElement('a');
+                        a.href = URL.createObjectURL(response.blob());
+                        a.download = 'data_export.xlsx'; // Use appropriate filename
+                        a.click();
+                        URL.revokeObjectURL(a.href);
+                    } else {
+                        return response.json().then(data => {
+                            // Handle errors
+                            alert(data.error || 'An error occurred while downloading the file.');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+
+
+
+
     @include('institutionlogo')
-
-    <footer>
-        <span class="small"> Copyright &copy;
-            <script>
-                document.write(new Date().getFullYear())
-            </script>, Bangladesh Agricultural Research Council.
-            <br>
-            Developed and maintained by Computer and GIS unit, Bangladesh Agricultural Research Council.
-        </span>
-    </footer>
-
-    <!-- Bootstrap JS and dependencies (Optional if you require JS functionality) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             // Store districts and upazilas as arrays within an object
@@ -388,7 +332,22 @@
             });
         });
     </script>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find the success alert element
+            var successAlert = document.getElementById('success-alert');
+            // If the success alert exists, set a timeout to hide it after 5 seconds (5000 milliseconds)
+            if (successAlert) {
+                setTimeout(function() {
+                    successAlert.style.display = 'none';
+                }, 5000); // 5000 milliseconds = 5 seconds
+            }
+        });
+    </script>
+
 </body>
+
 
 
 </html>

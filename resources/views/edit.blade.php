@@ -114,8 +114,8 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
                                 <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
-                                <a class="dropdown-item" href="/soilchemicaldata">Report</a>
-                                <a class="dropdown-item" href="#">Download</a>
+                                <a class="dropdown-item" href="/soilchemicaldata">Soil Chemical Data</a>
+                                <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                             </div>
                         </li>
 
