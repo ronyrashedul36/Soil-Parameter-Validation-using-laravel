@@ -18,78 +18,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class PhpSpreadsheetController extends Controller
 {
 
-    // public function download(Request $request)
-    // {
-    //     $division = $request->input('division');
-    //     $district = $request->input('district');
-    //     $upazila = $request->input('upazila');
-    //     $year = $request->input('year');
-
-    //     // Query the database based on the filter criteria
-    //     $query = \App\Models\SoilData::query();
-
-    //     if ($division) {
-    //         $query->where('division', $division);
-    //     }
-    //     if ($district) {
-    //         $query->where('district', $district);
-    //     }
-    //     if ($upazila) {
-    //         $query->where('upazila', $upazila);
-    //     }
-    //     if ($year) {
-    //         $query->where('year', $year);
-    //     }
-
-    //     $data = $query->get();
-
-    //     // Generate CSV content
-    //     $csvFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
-    //     $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
-
-    //     // Return the response with the CSV file
-    //     return response()->stream(
-    //         function () use ($data, $headers) {
-    //             $handle = fopen('php://output', 'w');
-
-    //             // Handle fopen failure
-    //             if ($handle === false) {
-    //                 return response()->json(['error' => 'Could not open output stream'], 500);
-    //             }
-
-    //             // Add the headers
-    //             fputcsv($handle, $headers);
-
-    //             // Add the data rows
-    //             foreach ($data as $row) {
-    //                 fputcsv($handle, [
-    //                     $row->division, $row->district, $row->upazila, $row->fid, $row->smpl_no, $row->mu, $row->land_type,
-    //                     $row->soil_series, $row->soil_group, $row->texture, $row->ec, $row->ph, $row->ea, $row->om, $row->n,
-    //                     $row->po, $row->pb, $row->k, $row->s, $row->zn, $row->b, $row->ca, $row->mg, $row->cu, $row->fe,
-    //                     $row->mn, $row->upz_code, $row->year
-    //                 ]);
-    //             }
-
-    //             fclose($handle);
-    //         },
-    //         200,
-    //         [
-    //             'Content-Type' => 'text/csv',
-    //             'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
-    //         ]
-    //     );
-    // }
-
     public function download(Request $request)
     {
-        $division = $request->input('division');
-        $district = $request->input('district');
-        $upazila = $request->input('upazila');
-        $year = $request->input('year');
-
-        dd($division);
-
+        $validatedData = $request->validate([
+            'division2' => 'nullable|string|max:255',
+            'district2' => 'nullable|string|max:255',
+            'upazila2' => 'nullable|string|max:255',
+            'year2' => 'nullable|numeric',
+        ]);
+        // dd($validatedData['division2']);
         // Query the database based on the filter criteria
+
+        $division = $validatedData['division2'];
+        $district = $validatedData['district2'];
+        $upazila = $validatedData['upazila2'];
+        $year = $validatedData['year2'];
         $query = \App\Models\SoilData::query();
 
         if ($division) {
@@ -105,65 +48,75 @@ class PhpSpreadsheetController extends Controller
             $query->where('year', $year);
         }
 
+
+
         $data = $query->get();
-
-        // Generate Excel file content
-        $excelFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.xlsx';
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
-        $sheet->fromArray($headers, NULL, 'A1');
-
-        $rows = [];
-        foreach ($data as $row) {
-            $rows[] = [
-                $row->division,
-                $row->district,
-                $row->upazila,
-                $row->fid,
-                $row->smpl_no,
-                $row->mu,
-                $row->land_type,
-                $row->soil_series,
-                $row->soil_group,
-                $row->texture,
-                $row->ec,
-                $row->ph,
-                $row->ea,
-                $row->om,
-                $row->n,
-                $row->po,
-                $row->pb,
-                $row->k,
-                $row->s,
-                $row->zn,
-                $row->b,
-                $row->ca,
-                $row->mg,
-                $row->cu,
-                $row->fe,
-                $row->mn,
-                $row->upz_code,
-                $row->year
-            ];
+        if ($data->isEmpty()) {
+            // If no data is found, return with a success message
+            return redirect()->back()->with('success', 'No Soil Data Found for the selected criteria!');
         }
-        $sheet->fromArray($rows, NULL, 'A2');
+        // Generate CSV content
+        $csvFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
+        $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
 
-        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
-
-        // Return the response with the Excel file
+        // Return the response with the CSV file
         return response()->stream(
-            function () use ($writer) {
-                $writer->save('php://output');
+            function () use ($data, $headers) {
+                $handle = fopen('php://output', 'w');
+
+                // Handle fopen failure
+                if ($handle === false) {
+                    return response()->json(['error' => 'Could not open output stream'], 500);
+                }
+
+                // Add the headers
+                fputcsv($handle, $headers);
+
+                // Add the data rows
+                foreach ($data as $row) {
+                    fputcsv($handle, [
+                        $row->division,
+                        $row->district,
+                        $row->upazila,
+                        $row->fid,
+                        $row->smpl_no,
+                        $row->mu,
+                        $row->land_type,
+                        $row->soil_series,
+                        $row->soil_group,
+                        $row->texture,
+                        $row->ec,
+                        $row->ph,
+                        $row->ea,
+                        $row->om,
+                        $row->n,
+                        $row->po,
+                        $row->pb,
+                        $row->k,
+                        $row->s,
+                        $row->zn,
+                        $row->b,
+                        $row->ca,
+                        $row->mg,
+                        $row->cu,
+                        $row->fe,
+                        $row->mn,
+                        $row->upz_code,
+                        $row->year
+                    ]);
+                }
+
+                fclose($handle);
             },
             200,
             [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="' . $excelFileName . '"',
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
             ]
         );
     }
+
+
 
 
     public function retrieveData(Request $request)

@@ -31,7 +31,7 @@ Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'storeSoilDat
 
 Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'retrieveData'])->name('PhpSpreadsheetController.retrieveData');
 
-Route::get('/download', [PhpSpreadsheetController::class, 'download'])->name('PhpSpreadsheetController.download');
+Route::post('/download', [PhpSpreadsheetController::class, 'download'])->name('PhpSpreadsheetController.download');
 
 
 

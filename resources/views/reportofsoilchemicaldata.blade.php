@@ -150,7 +150,7 @@
     </div>
 
     <div class="container mt-2">
-        <h4 class="form-label-custom mb-4">Report</h4>
+        <h4 class="form-label-custom mb-4">Search Report</h4>
         <form action="{{ route('PhpSpreadsheetController.retrieveData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
@@ -188,59 +188,56 @@
             </div>
             <div class="d-flex justify-content-center mt-4">
                 <button type="submit" class="btn btn-primary mx-2">Search</button>
-                <button type="button" class="btn btn-primary mx-2" onclick="submitFormForDownload()">Download</button>
             </div>
         </form>
     </div>
 
-    <script>
-        function submitFormForDownload() {
-            // Collect the values from the input fields
-            var division = document.getElementById('division').value;
-            var district = document.getElementById('district').value;
-            var upazila = document.getElementById('upazila').value;
-            var year = document.getElementById('year').value;
 
-            // Create a FormData object to hold the form data
-            var formData = new FormData();
-            formData.append('division', division);
-            formData.append('district', district);
-            formData.append('upazila', upazila);
-            formData.append('year', year);
-            formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+    <div class="container mt-2">
+        <h4 class="form-label-custom mb-4">Download Report</h4>
+        <form action="{{ route('PhpSpreadsheetController.download') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
+            @csrf
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="division2" class="form-label">Division </label>
+                    <select class="form-select" id="division2" name="division2">
+                        <option value="">Select Division</option>
+                        <option value="Dhaka">Dhaka</option>
+                        <option value="Chattogram">Chattogram</option>
+                        <option value="Khulna">Khulna</option>
+                        <option value="Rajshahi">Rajshahi</option>
+                        <option value="Barishal">Barishal</option>
+                        <option value="Sylhet">Sylhet</option>
+                        <option value="Rangpur">Rangpur</option>
+                        <option value="Mymensingh">Mymensingh</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="district2" class="form-label">District </label>
+                    <select class="form-select" id="district2" name="district2">
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="upazila2" class="form-label">Upazila </label>
+                    <select class="form-select" id="upazila2" name="upazila2">
+                        <option value="">Select Upazila</option>
+                    </select>
+                </div>
 
-            // Send an AJAX request to the server
-            fetch('{{ route("PhpSpreadsheetController.download") }}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Create a link element to trigger the download
-                        var a = document.createElement('a');
-                        a.href = URL.createObjectURL(response.blob());
-                        a.download = 'data_export.xlsx'; // Use appropriate filename
-                        a.click();
-                        URL.revokeObjectURL(a.href);
-                    } else {
-                        return response.json().then(data => {
-                            // Handle errors
-                            alert(data.error || 'An error occurred while downloading the file.');
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-    </script>
+                <div class="col-md-4">
+                    <label for="year" class="form-label">Year </label>
+                    <input type="number" class="form-control" id="year2" name="year2" min="1900" max="2500" step="1">
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary mx-2">Download</button>
+            </div>
+        </form>
+    </div>
 
 
-
+    <br>
 
     @include('institutionlogo')
     <script type="text/javascript">
@@ -297,38 +294,44 @@
                 'Nilphamari': ['Nilphamari Sadar', 'Dimla', 'Kishoreganj', 'Jaldhaka', 'Domar', 'Syedpur'],
             };
 
-            // Handle division selection change
-            $('#division').on('change', function() {
-                var selectedDivision = $(this).val();
-                var $district = $('#district');
-                var $upazila = $('#upazila');
-
-                $district.empty(); // Clear previous district options
-                $district.append('<option value="">Select District</option>'); // Add default option
-
-                $upazila.empty(); // Clear previous upazila options
-                $upazila.append('<option value="">Select Upazila</option>'); // Add default option
-
+            function handleDivisionChange(divisionSelector, districtSelector, upazilaSelector) {
+                var selectedDivision = divisionSelector.val();
+                districtSelector.empty(); // Clear previous district options
+                districtSelector.append('<option value="">Select District</option>'); // Add default option
+                upazilaSelector.empty(); // Clear previous upazila options
+                upazilaSelector.append('<option value="">Select Upazila</option>'); // Add default option
                 if (selectedDivision && districtsByDivision[selectedDivision]) {
                     districtsByDivision[selectedDivision].forEach(function(district) {
-                        $district.append('<option value="' + district + '">' + district + '</option>');
+                        districtSelector.append('<option value="' + district + '">' + district + '</option>');
                     });
                 }
-            });
+            }
 
-            // Handle district selection change
-            $('#district').on('change', function() {
-                var selectedDistrict = $(this).val();
-                var $upazila = $('#upazila');
-
-                $upazila.empty(); // Clear previous upazila options
-                $upazila.append('<option value="">Select Upazila</option>'); // Add default option
-
+            function handleDistrictChange(districtSelector, upazilaSelector) {
+                var selectedDistrict = districtSelector.val();
+                upazilaSelector.empty(); // Clear previous upazila options
+                upazilaSelector.append('<option value="">Select Upazila</option>'); // Add default option
                 if (selectedDistrict && upazilasByDistrict[selectedDistrict]) {
                     upazilasByDistrict[selectedDistrict].forEach(function(upazila) {
-                        $upazila.append('<option value="' + upazila + '">' + upazila + '</option>');
+                        upazilaSelector.append('<option value="' + upazila + '">' + upazila + '</option>');
                     });
                 }
+            }
+
+            $('#division').on('change', function() {
+                handleDivisionChange($('#division'), $('#district'), $('#upazila'));
+            });
+
+            $('#district').on('change', function() {
+                handleDistrictChange($('#district'), $('#upazila'));
+            });
+
+            $('#division2').on('change', function() {
+                handleDivisionChange($('#division2'), $('#district2'), $('#upazila2'));
+            });
+
+            $('#district2').on('change', function() {
+                handleDistrictChange($('#district2'), $('#upazila2'));
             });
         });
     </script>
