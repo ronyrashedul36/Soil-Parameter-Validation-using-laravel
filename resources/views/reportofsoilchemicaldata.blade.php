@@ -193,7 +193,7 @@
     </div>
 
 
-    <div class="container mt-2">
+    <div class="container mt-2 mb-5">
         <h4 class="form-label-custom mb-4">Download Report</h4>
         <form action="{{ route('PhpSpreadsheetController.download') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
@@ -236,8 +236,6 @@
         </form>
     </div>
 
-
-    <br>
 
     @include('institutionlogo')
     <script type="text/javascript">

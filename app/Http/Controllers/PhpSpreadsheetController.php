@@ -14,9 +14,47 @@ use App\Exports\SoilDataExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-
+use Illuminate\Support\Facades\Validator;
+use App\Mail\ActivationMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailable;
+use App\Models\Signup;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 class PhpSpreadsheetController extends Controller
 {
+
+    public function signin(Request $request)
+    {
+        try{
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'organization' => 'required|string|max:255',
+                'email' => 'required|email|unique:signups,email',
+                'password' => 'required|string|max:255',
+                'country' => 'required|string|max:255',
+                'profession' => 'required|string|max:255',
+                'purpose' => 'required|string|max:255',
+                'phone' => 'required|string|max:15',
+            ]);
+    
+            // Hash the password
+            $validated['password'] = Hash::make($validated['password']);
+    
+            // dd($validated['password']);
+            // Create a new signup entry
+             Signup::create($validated);
+    
+            // Redirect or return a response
+            return redirect()->back()->with('success', 'Signup successful!');
+       
+            
+        } catch(ValidationException $e) {
+            return redirect()->back()->with('success', 'The email has already been taken. Please use a different email address.');
+        }
+        
+    }
+
 
     public function download(Request $request)
     {

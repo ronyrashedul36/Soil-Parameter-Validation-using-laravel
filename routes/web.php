@@ -27,11 +27,13 @@ Route::post('/checkFileStatus', [PhpSpreadsheetController::class, 'checkFileStat
 
 Route::get('/downloadFile', [PhpSpreadsheetController::class, 'downloadFile'])->name('PhpSpreadsheetController.downloadFile');
 
-Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'storeSoilData'])->name('PhpSpreadsheetController.storeSoilData');
+Route::post('/soilsinglerowdataentry', [PhpSpreadsheetController::class, 'storeSoilData'])->name('PhpSpreadsheetController.storeSoilData');
 
 Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'retrieveData'])->name('PhpSpreadsheetController.retrieveData');
 
 Route::post('/download', [PhpSpreadsheetController::class, 'download'])->name('PhpSpreadsheetController.download');
+
+Route::post('/signin', [PhpSpreadsheetController::class, 'signin'])->name('PhpSpreadsheetController.signin');
 
 
 
@@ -43,6 +45,9 @@ Route::get('/reportofsoilchemicaldata', function() {
 return view('/reportofsoilchemicaldata');
 });
 
+Route::get('/login', function() {
+    return view('/login');
+    });
 
 Route::get('/demo', function () {
     return view('demo');
