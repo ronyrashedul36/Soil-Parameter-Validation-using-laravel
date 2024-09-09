@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -21,12 +22,49 @@ use Illuminate\Contracts\Mail\Mailable;
 use App\Models\Signup;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
+
 class PhpSpreadsheetController extends Controller
 {
 
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/demo');
+    }
+    public function login(Request $request)
+    {
+        // Validate the input data
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|max:255',
+        ]);
+
+        // Retrieve the user by email from the database
+        $user = Signup::where('email', $validated['email'])->first();
+
+        // Check if user exists and password matches
+        if ($user && Hash::check($validated['password'], $user->password)) {
+            // Log the user in using Laravel's Auth system
+            Auth::login($user);  // Log in the user
+
+            // Regenerate session to prevent session fixation
+            $request->session()->regenerate();
+            Session::flash('debug', Auth::user()->name);
+            // Redirect to the intended page or 'demo'
+            // dd(Auth::user()->name);
+            return redirect()->intended('demo');
+        }
+
+        // If authentication fails, return back with an error message
+        return redirect()->back()->with('success', 'The provided credentials do not match our records.');
+    }
     public function signin(Request $request)
     {
-        try{
+        try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'organization' => 'required|string|max:255',
@@ -37,22 +75,19 @@ class PhpSpreadsheetController extends Controller
                 'purpose' => 'required|string|max:255',
                 'phone' => 'required|string|max:15',
             ]);
-    
+
             // Hash the password
             $validated['password'] = Hash::make($validated['password']);
-    
+
             // dd($validated['password']);
             // Create a new signup entry
-             Signup::create($validated);
-    
+            Signup::create($validated);
+
             // Redirect or return a response
             return redirect()->back()->with('success', 'Signup successful!');
-       
-            
-        } catch(ValidationException $e) {
+        } catch (ValidationException $e) {
             return redirect()->back()->with('success', 'The email has already been taken. Please use a different email address.');
         }
-        
     }
 
 

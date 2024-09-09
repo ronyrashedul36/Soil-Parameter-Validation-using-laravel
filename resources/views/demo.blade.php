@@ -20,7 +20,6 @@
 
 
     <style>
-
         body {
             display: flex;
             flex-direction: column;
@@ -85,6 +84,7 @@
             </div>
         </div>
     </div> -->
+
 
     @include('header')
 
@@ -159,9 +159,8 @@
             {{ Session::get('success') }}
         </div>
         @endif
-        <div class="flex-container">
+        <!-- <div class="flex-container">
             <h4>List of Upazila Nirdesika</h4>
-            <!-- <input type="text" id="searchInput" placeholder="search.." onkeyup="searchTable()"> -->
         </div>
 
         <div>
@@ -173,7 +172,7 @@
                         <th>Upazila</th>
                         <th>Download</th>
                         <th>Year</th>
-                        <th>Action</th> <!-- Action column added -->
+                        <th>Action</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -185,7 +184,7 @@
                         <td><a href="{{ url('/download', $item->FilePath) }}">Download</a></td>
                         <td>{{ $item->Year }}</td>
                         <td>
-                            <!-- <button type="button" value="{{$item->id}}" ></button> -->
+                           
                             <a href="{{url('/edit', $item->id)}}" class="btn btn-primary editbtn">Edit</a>
                             <form action="{{ url('/delete', $item->id) }}" method="post" style="display: inline;">
                                 @csrf
@@ -197,20 +196,11 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
+        </div> -->
     </div>
 
     @include('institutionlogo')
 
-    <!-- <footer>
-        <span class="small"> Copyright &copy;
-            <script>
-                document.write(new Date().getFullYear())
-            </script>, Bangladesh Agricultural Research Council.
-            <br>
-            Developed and maintained by Computer and GIS unit, Bangladesh Agricultural Research Council.
-        </span>
-    </footer> -->
 
     <script>
         // Wait for the DOM to be fully loaded

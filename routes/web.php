@@ -35,6 +35,9 @@ Route::post('/download', [PhpSpreadsheetController::class, 'download'])->name('P
 
 Route::post('/signin', [PhpSpreadsheetController::class, 'signin'])->name('PhpSpreadsheetController.signin');
 
+Route::post('/login', [PhpSpreadsheetController::class, 'login'])->name('PhpSpreadsheetController.login');
+
+Route::post('/logout', [PhpSpreadsheetController::class, 'logout'])->name('PhpSpreadsheetController.logout');
 
 
 Route::get('/soilchemicaldata', function() {

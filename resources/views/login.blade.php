@@ -141,14 +141,15 @@
             <!-- Login Form -->
             <div class="col-md-4">
                 <h2 class="text-center mb-4">Login</h2>
-                <form>
-                    <div class="mb-3">
+                <form action="{{ route('PhpSpreadsheetController.login') }}" method="POST">
+                @csrf    
+                <div class="mb-3">
                         <label for="loginEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" onblur="check_email(this.id)" required>
+                        <input type="email" class="form-control" name="email" id="loginEmail" placeholder="Enter your email" onblur="check_email(this.id)" required>
                     </div>
                     <div class="mb-3">
                         <label for="loginPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                        <input type="password" class="form-control" name="password" id="loginPassword" placeholder="Enter your password" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
