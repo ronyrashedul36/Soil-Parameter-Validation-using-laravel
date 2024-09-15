@@ -1,25 +1,42 @@
-<!-- <div class="container align-items-center">
-        <h3 style="font-family: 'Verdana', sans-serif; font-size: 24px; color: #333; text-align: center; padding: 20px; background-color: #fff;">
-            Soil Data Management System
-        </h3>
-
-
-    </div> -->
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
 
 <div class="container align-items-center" style="position: relative; background-color: #fff; padding: 20px;">
-    <!-- Heading (centered) -->
+
     <h3 style="font-family: 'Verdana', sans-serif; font-size: 24px; color: #333; text-align: center;">
         Soil Data Management System
     </h3>
 
-    <!-- Conditionally show Login or Username with Logout Button -->
+
     @if (Auth::check())
     <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; align-items: center;">
-        <!-- Display user's name -->
+        <!-- @if (Auth::user()->role == 'admin')
+        <p>Role is admin</p>
+        @else
+        <p>Role: {{ Auth::user()->role }}</p>
+        @endif -->
+
+        @if (Auth::user()->role == 'admin')
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown" id="approvalSection">
+                <a class="nav-link" data-toggle="dropdown" href="#" data-toggle="tooltip" data-placement="bottom" title="Pending Request">
+                    <i class="fas fa-check-square"></i>
+                    <span class="badge badge-danger" id="requestCount"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="approvalMenu" style="max-height: 300px; overflow-y: auto; overflow-x: hidden;">
+                    <div class="dropdown-item">
+                        <p class="text-center" id="requestNumber"></p>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                </div>
+            </li>
+        </ul>
+        @endif
         <span style="margin-right: 10px;">
             {{ Auth::user()->name }}
         </span>
-        <!-- Logout button -->
+
         <form action="{{ route('PhpSpreadsheetController.logout') }}" method="POST" style="margin: 0;">
             @csrf
             <button type="submit" class="btn">
@@ -28,7 +45,7 @@
         </form>
     </div>
     @else
-    <!-- Show Login button if not logged in -->
+
     <a href="/login" class="btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);">
         Login
     </a>

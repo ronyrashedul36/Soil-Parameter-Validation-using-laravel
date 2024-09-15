@@ -107,7 +107,7 @@
                     <ul class="navbar-nav">
                         <!-- Dropdown with Hover Effect -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/demo">Home</a>
+                            <a class="nav-link" href="/home">Home</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -159,7 +159,7 @@
             {{ Session::get('success') }}
         </div>
         @endif
-        <!-- <div class="flex-container">
+        <div class="flex-container">
             <h4>List of Upazila Nirdesika</h4>
         </div>
 
@@ -196,7 +196,7 @@
                     @endforeach
                 </tbody>
             </table>
-        </div> -->
+        </div>
     </div>
 
     @include('institutionlogo')

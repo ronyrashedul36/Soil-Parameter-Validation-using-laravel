@@ -44,6 +44,10 @@ Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');
 });
 
+Route::get('/home', function() {
+    return view('home');
+});
+
 Route::get('/reportofsoilchemicaldata', function() {
 return view('/reportofsoilchemicaldata');
 });
