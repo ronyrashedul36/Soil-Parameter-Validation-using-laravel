@@ -31,7 +31,12 @@ Route::post('/soilsinglerowdataentry', [PhpSpreadsheetController::class, 'storeS
 
 Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'retrieveData'])->name('PhpSpreadsheetController.retrieveData');
 
+
+Route::post('/upazilanirdesikareport', [PhpSpreadsheetController::class, 'retrieveNirdesikaData'])->name('PhpSpreadsheetController.retrieveNirdesikaData');
+
 Route::post('/download', [PhpSpreadsheetController::class, 'download'])->name('PhpSpreadsheetController.download');
+
+Route::post('/downloadNirdesikaData', [PhpSpreadsheetController::class, 'downloadNirdesikaData'])->name('PhpSpreadsheetController.downloadNirdesikaData');
 
 Route::post('/signin', [PhpSpreadsheetController::class, 'signin'])->name('PhpSpreadsheetController.signin');
 
@@ -40,8 +45,13 @@ Route::post('/login', [PhpSpreadsheetController::class, 'login'])->name('PhpSpre
 Route::post('/logout', [PhpSpreadsheetController::class, 'logout'])->name('PhpSpreadsheetController.logout');
 
 
+
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');
+});
+
+Route::get('/upazilanirdesikareport', function() {
+    return view('upazilanirdesikareport');
 });
 
 Route::get('/home', function() {

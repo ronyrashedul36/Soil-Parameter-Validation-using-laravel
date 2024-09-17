@@ -145,7 +145,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/demo">Nirdesika Management</a>
                                 <a class="dropdown-item" href="/inputform">Upload</a>
-                                <a class="dropdown-item" href="#">Report</a>
+                                <a class="dropdown-item" href="/upazilanirdesikareport">Report</a>
                             </div>
                         </li>
 

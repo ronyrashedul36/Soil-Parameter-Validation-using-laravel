@@ -151,7 +151,7 @@
 
     <div class="container mt-2">
         <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Search Report</h4>
-        <form action="{{ route('PhpSpreadsheetController.retrieveData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
+        <form action="{{ route('PhpSpreadsheetController.retrieveNirdesikaData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
                 <div class="col-md-4">
@@ -195,7 +195,7 @@
 
     <div class="container mt-2 mb-5">
         <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Download Report</h4>
-        <form action="{{ route('PhpSpreadsheetController.download') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
+        <form action="{{ route('PhpSpreadsheetController.downloadNirdesikaData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
                 <div class="col-md-4">

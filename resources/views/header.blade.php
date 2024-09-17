@@ -20,7 +20,7 @@
         @if (Auth::user()->role == 'admin')
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown" id="approvalSection">
-                <a class="nav-link" data-toggle="dropdown" href="#" data-toggle="tooltip" data-placement="bottom" title="Pending Request">
+                <a class="nav-link mr-2" data-toggle="dropdown" href="#" data-toggle="tooltip" data-placement="bottom" title="Pending Request">
                     <i class="fas fa-check-square"></i>
                     <span class="badge badge-danger" id="requestCount"></span>
                 </a>
@@ -51,3 +51,41 @@
     </a>
     @endif
 </div>
+
+<script type="text/javascript">
+    // $("#selectAll").click(function() {
+    //   $("input[type=checkbox]").prop('checked', $(this).prop('checked'));
+    // });
+    var userID = "{{ auth()->id() }}";
+    console.log(userID);
+
+    // $(document).ready(function() {
+    //     // approvalDropdown_show();
+    //     // requestCount();
+
+    // });
+</script>
+
+<script>
+    function requestCount() {
+        $.ajax({
+            url: route('PhpSpreadsheetController/requestCount'),
+            type: "get",
+            dataType: "json",
+            success: function(response) {
+                if (response.success === true) {
+                    $('#requestCount').text(response.data.totalRow);
+                    if (response.data.totalRow > 0) {
+                        $('#requestNumber').text(response.data.totalRow + ' Pending Request');
+                    } else {
+                        $('#requestNumber').text('Pending Request');
+                    }
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error fetching request count: " + textStatus, errorThrown);
+                $('#requestNumber').text('Error fetching request count');
+            }
+        });
+    }
+</script>

@@ -20,12 +20,147 @@ use App\Mail\ActivationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Mail\Mailable;
 use App\Models\Signup;
+use App\Models\UpazilaNirdesika;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 
 class PhpSpreadsheetController extends Controller
 {
+
+    public function downloadNirdesikaData(Request $request)
+    {
+        $validatedData = $request->validate([
+            'division2' => 'nullable|string|max:255',
+            'district2' => 'nullable|string|max:255',
+            'upazila2' => 'nullable|string|max:255',
+            'year2' => 'nullable|numeric',
+        ]);
+        $division = $validatedData['division2'];
+        $district = $validatedData['district2'];
+        $upazila = $validatedData['upazila2'];
+        $year = $validatedData['year2'];
+        $query = \App\Models\UpazilaNirdesika::query();
+
+        if ($division) {
+            $query->where('Division', $division);
+        }
+        if ($district) {
+            $query->where('District', $district);
+        }
+        if ($upazila) {
+            $query->where('Upazila', $upazila);
+        }
+        if ($year) {
+            $query->where('Year', $year);
+        }
+
+        $data = $query->get();
+        if ($data->isEmpty()) {
+            // If no data is found, return with a success message
+            return redirect()->back()->with('success', 'No Soil Data Found for the selected criteria!');
+        }
+        // Generate CSV content
+        $csvFileName = 'NirdesikaData_' . now()->format('Y_m_d_H_i_s') . '.csv';
+        $headers = ['Division', 'District', 'Upazila', 'year'];
+
+        // Return the response with the CSV file
+        return response()->stream(
+            function () use ($data, $headers) {
+                $handle = fopen('php://output', 'w');
+
+                // Handle fopen failure
+                if ($handle === false) {
+                    return response()->json(['error' => 'Could not open output stream'], 500);
+                }
+
+                // Add the headers
+                fputcsv($handle, $headers);
+
+                // Add the data rows
+                foreach ($data as $row) {
+                    fputcsv($handle, [
+                        $row->Division,
+                        $row->District,
+                        $row->Upazila,
+                        $row->Year
+                    ]);
+                }
+
+                fclose($handle);
+            },
+            200,
+            [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
+            ]
+        );
+    }
+
+    public function retrieveNirdesikaData(Request $request)
+    {
+        $validatedData = $request->validate([
+            'division' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'upazila' => 'nullable|string|max:255',
+            'year' => 'nullable|numeric',
+        ]);
+        $query = \App\Models\UpazilaNirdesika::query();
+        // Apply filters based on the validated data
+        if (!empty($validatedData['division'])) {
+            $query->where('Division', $validatedData['division']);
+        }
+
+        if (!empty($validatedData['district'])) {
+            $query->where('District', $validatedData['district']);
+        }
+
+        if (!empty($validatedData['upazila'])) {
+            $query->where('Upazila', $validatedData['upazila']);
+        }
+
+        if (!empty($validatedData['year'])) {
+            $query->where('Year', $validatedData['year']);
+        }
+
+        // Execute the query and get the results
+        $results = $query->get();
+        // dd($results);
+        if (!$results->isEmpty()) {
+            return redirect()->back()->with('success', 'Upazila Nirdesikha Data Found!');
+        } else {
+            return redirect()->back()->with('success', 'No Upazila Nirdesikha Data found for the provided criteria.');
+        }
+
+        // Return the results, for example, as a JSON response
+        return response()->json($results);
+    }
+    public function requestCount()
+    {
+        // Assuming you have a model named `Request` or equivalent
+        // that contains a column for the status of the request
+        // e.g., 'status' => 'pending'
+
+        try {
+            // Query the database for the count of pending requests
+            $totalPendingRequests = Request::where('status', 'pending')->count();
+
+            // Return a JSON response with the count
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'totalRow' => $totalPendingRequests
+                ]
+            ]);
+        } catch (\Exception $e) {
+            // Handle any errors, such as database connection issues
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching pending requests',
+                'error' => $e->getMessage()
+            ], 500); // Internal Server Error
+        }
+    }
 
     public function logout(Request $request)
     {
