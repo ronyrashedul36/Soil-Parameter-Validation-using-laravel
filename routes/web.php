@@ -44,6 +44,7 @@ Route::post('/login', [PhpSpreadsheetController::class, 'login'])->name('PhpSpre
 
 Route::post('/logout', [PhpSpreadsheetController::class, 'logout'])->name('PhpSpreadsheetController.logout');
 
+Route::get('/getMessages', [PhpSpreadsheetController::class, 'getMessagesData'])->name('PhpSpreadsheetController.getMessages');
 
 
 Route::get('/soilchemicaldata', function() {
@@ -52,6 +53,10 @@ Route::get('/soilchemicaldata', function() {
 
 Route::get('/upazilanirdesikareport', function() {
     return view('upazilanirdesikareport');
+});
+
+Route::get('/notifications', function() {
+    return view('notifications');
 });
 
 Route::get('/home', function() {

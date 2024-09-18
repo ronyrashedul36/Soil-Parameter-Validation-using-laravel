@@ -24,9 +24,51 @@ use App\Models\UpazilaNirdesika;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Message;
 
 class PhpSpreadsheetController extends Controller
 {
+
+    public function getMessagesData()
+    {
+        if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin')) {
+            $messages = Message::where('receiver_id', Auth::id())->get();
+            $messageCount = $messages->count();
+
+            return response()->json([
+                'messageCount' => $messageCount,
+                'messages' => $messages
+            ]);
+        }
+
+        return response()->json(['messageCount' => 0, 'messages' => []]);
+    }
+    public function store(Request $request)
+    {
+        // Step 1: Insert the data (e.g., a new record in your table)
+        $data = new Message();
+        $data->field = $request->input('field');
+        $data->save();
+
+        // Step 2: Check if the current user is an admin
+        if (Auth::user()->role == 'admin') {
+            // Step 3: Get all super admins
+            $superAdmins = Signup::where('role', 'super admin')->get();
+
+            // Step 4: Send a message to each super admin
+            foreach ($superAdmins as $superAdmin) {
+                Message::create([
+                    'admin_id' => Auth::id(),  // current admin's ID
+                    'admin_name' => Auth::user()->name,  // current admin's name
+                    'receiver_id' => $superAdmin->id,  // super admin's ID
+                    'message' => 'New data has been inserted by admin.',
+                ]);
+            }
+        }
+
+        // Step 5: Redirect or return response
+        return redirect()->back()->with('success', 'Data inserted and message sent to super admin(s).');
+    }
 
     public function downloadNirdesikaData(Request $request)
     {
@@ -709,7 +751,23 @@ class PhpSpreadsheetController extends Controller
         } else {
             SoilData::create($validatedData);
         }
-
+        
+        if (Auth::user()->role == 'admin') {
+            // Step 3: Get all super admins
+            $superAdmins = Signup::where('role', 'super admin')->get();
+            foreach ($superAdmins as $superAdmin) {
+                Message::create([
+                    'admin_id' => Auth::id(),  // current admin's ID
+                    'admin_name' => Auth::user()->name,  // current admin's name
+                    'receiver_id' => $superAdmin->id,  // super admin's ID
+                    'message' => 'New data has been inserted by admin.',
+                    'division' => $validatedData['division'],
+                    'district' => $validatedData['district'],
+                    'upazila' => $validatedData['upazila'],
+                    'year' => $validatedData['year'],
+                ]);
+            }
+        }
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Soil Data Submitted Successfully!');
     }
