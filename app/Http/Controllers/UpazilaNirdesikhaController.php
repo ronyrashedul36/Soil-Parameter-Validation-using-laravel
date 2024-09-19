@@ -52,7 +52,8 @@ class UpazilaNirdesikhaController extends Controller
 
     public function show1()
     {
-        $data = SoilData::all();
+        // $data = SoilData::all();
+        $data = SoilData::whereIn('approval', ['Approved'])->get();
         return view('/soilchemicaldata', compact('data'));
     }
 

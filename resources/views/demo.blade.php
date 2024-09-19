@@ -20,6 +20,13 @@
 
 
     <style>
+        #upazila_nirdesikas th,
+        #upazila_nirdesikas td {
+            text-align: center;
+            vertical-align: middle;
+            /* Optional: Vertically center content as well */
+        }
+
         body {
             display: flex;
             flex-direction: column;
@@ -172,7 +179,7 @@
                         <th>Upazila</th>
                         <th>Download</th>
                         <th>Year</th>
-                        <th>Action</th> 
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -184,7 +191,7 @@
                         <td><a href="{{ url('/download', $item->FilePath) }}">Download</a></td>
                         <td>{{ $item->Year }}</td>
                         <td>
-                           
+
                             <a href="{{url('/edit', $item->id)}}" class="btn btn-primary editbtn">Edit</a>
                             <form action="{{ url('/delete', $item->id) }}" method="post" style="display: inline;">
                                 @csrf

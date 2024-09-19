@@ -46,6 +46,10 @@ Route::post('/logout', [PhpSpreadsheetController::class, 'logout'])->name('PhpSp
 
 Route::get('/getMessages', [PhpSpreadsheetController::class, 'getMessagesData'])->name('PhpSpreadsheetController.getMessages');
 
+Route::get('/getData', [PhpSpreadsheetController::class, 'getData'])->name('PhpSpreadsheetController.getData'); 
+
+Route::get('/updateMessageAndsoilData/{division}/{district}/{upazila}/{year}', [PhpSpreadsheetController::class, 'updateMessageAndsoilData'])->name('PhpSpreadsheetController.updateMessageAndsoilData');
+
 
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');

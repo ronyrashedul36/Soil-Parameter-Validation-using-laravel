@@ -25,9 +25,77 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Message;
+use Illuminate\Support\Facades\DB;
 
 class PhpSpreadsheetController extends Controller
 {
+
+    public function updateMessageAndsoilData($division, $district, $upazila, $year)
+    {
+        $recordExists1 = SoilData::where('division', $division)
+            ->where('district', $district)
+            ->where('upazila', $upazila)
+            ->where('year', $year)
+            ->exists();
+
+
+        $recordExists = Message::where('division', $division)
+            ->where('district', $district)
+            ->where('upazila', $upazila)
+            ->where('year', $year)
+            ->exists();
+
+        if ($recordExists1 && $recordExists) {
+            SoilData::where('division', $division)
+                ->where('district', $district)
+                ->where('upazila', $upazila)
+                ->where('year', $year)
+                ->update(['approval' => 'Approved']);
+
+            $newMessageforAdmin = Message::where('division', $division)
+                ->where('district', $district)
+                ->where('upazila', $upazila)
+                ->where('year', $year)
+                ->get();
+            // dd($newMessageforAdmin);
+            foreach ($newMessageforAdmin as $message) {
+                Message::create([
+                    'admin_id' => Auth::id(),  // current admin's ID
+                    'admin_name' => Auth::user()->name,  // current admin's name
+                    'receiver_id' => $message->admin_id,  // super admin's ID
+                    'message' => 'New data has been Approved by Super admin.',
+                    'division' => $message->division,
+                    'district' => $message->district,
+                    'upazila' => $message->upazila,
+                    'year' => $message->year,
+                ]);
+            }
+
+            Message::where('division', $division)
+                ->where('district', $district)
+                ->where('upazila', $upazila)
+                ->where('year', $year)
+                ->where('receiver_id', Auth::id())
+                ->delete();
+
+            // return response()->json(['status' => 'success', 'message' => 'Data updated successfully']);
+            return redirect()->back()->with('success', 'Data updated successfully');
+        } else {
+            return redirect()->back()->with('success', 'Failed to update data');
+        }
+    }
+
+    public function getData(Request $request)
+    {
+        $adminorsuper = Signup::where('id', Auth::id())->get();
+        // // Assuming you're using a model called UpazilaData\
+
+        $data = Message::select('division', 'district', 'upazila', 'year', 'message')->where('receiver_id', Auth::id())
+            ->get();
+
+        return response()->json($data);
+    }
+
 
     public function getMessagesData()
     {
@@ -751,7 +819,7 @@ class PhpSpreadsheetController extends Controller
         } else {
             SoilData::create($validatedData);
         }
-        
+
         if (Auth::user()->role == 'admin') {
             // Step 3: Get all super admins
             $superAdmins = Signup::where('role', 'super admin')->get();
