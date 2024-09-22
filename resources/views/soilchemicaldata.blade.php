@@ -176,7 +176,7 @@
         </div>
         @endif
 
-        <div class="flex-container">
+        <div class="flex-container" style="font-family: 'Times New Roman', Times, serif;">
             <h4>Soil Chemical Data</h4>
         </div>
 

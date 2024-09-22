@@ -30,6 +30,14 @@ use Illuminate\Support\Facades\DB;
 class PhpSpreadsheetController extends Controller
 {
 
+    public function deleteMessage($id)
+    {
+        $upazilaNirdesika = Message::findOrFail($id);
+        $upazilaNirdesika->delete();
+
+        return redirect()->back()->with('success', 'Message deleted successfully!');
+    }
+
     public function updateMessageAndsoilData($division, $district, $upazila, $year)
     {
         $recordExists1 = SoilData::where('division', $division)
@@ -90,7 +98,7 @@ class PhpSpreadsheetController extends Controller
         $adminorsuper = Signup::where('id', Auth::id())->get();
         // // Assuming you're using a model called UpazilaData\
 
-        $data = Message::select('division', 'district', 'upazila', 'year', 'message')->where('receiver_id', Auth::id())
+        $data = Message::select('id', 'division', 'district', 'upazila', 'year', 'message')->where('receiver_id', Auth::id())
             ->get();
 
         return response()->json($data);

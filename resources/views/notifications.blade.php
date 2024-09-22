@@ -121,8 +121,13 @@
                     tableBody.empty(); // Clear any existing rows
 
                     $.each(data, function(index, item) {
+                        if (!item.id) {
+                            console.error('Item id is missing or undefined:', item);
+                            return; // Skip this iteration if id is missing
+                        }
                         if (item.division && item.district && item.upazila && item.year) {
                             let approveUrl = `{{ url('/updateMessageAndsoilData') }}/${item.division}/${item.district}/${item.upazila}/${item.year}`;
+                            let deleteUrl = `{{ url('/deleteMessage')}}/${item.id}`;
                             let row = `<tr>
                             <td>${item.division}</td>
                             <td>${item.district}</td>
@@ -130,7 +135,7 @@
                             <td>${item.year}</td>
                             <td>${item.message}</td>
                             <td>
-                                <form action="#" method="post" style="display: inline;">
+                                <form action="${deleteUrl}" method="post" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger m-0" style="font-size:15px;" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
@@ -155,6 +160,20 @@
 <script>
     $(document).ready(function() {
         $('#feedback').DataTable();
+    });
+</script>
+
+<script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the success alert element
+        var successAlert = document.getElementById('success-alert');
+        // If the success alert exists, set a timeout to hide it after 5 seconds (5000 milliseconds)
+        if (successAlert) {
+            setTimeout(function() {
+                successAlert.style.display = 'none';
+            }, 5000); // 5000 milliseconds = 5 seconds
+        }
     });
 </script>
 

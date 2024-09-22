@@ -50,6 +50,8 @@ Route::get('/getData', [PhpSpreadsheetController::class, 'getData'])->name('PhpS
 
 Route::get('/updateMessageAndsoilData/{division}/{district}/{upazila}/{year}', [PhpSpreadsheetController::class, 'updateMessageAndsoilData'])->name('PhpSpreadsheetController.updateMessageAndsoilData');
 
+Route::delete('/deleteMessage/{id}', [PhpSpreadsheetController::class, 'deleteMessage'])->name('PhpSpreadsheetController.deleteMessage');
+
 
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');
