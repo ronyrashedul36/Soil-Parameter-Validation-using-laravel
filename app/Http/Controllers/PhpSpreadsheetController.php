@@ -64,13 +64,21 @@ class PhpSpreadsheetController extends Controller
                 ->where('district', $district)
                 ->where('upazila', $upazila)
                 ->where('year', $year)
-                ->get();
+                ->get()
+                ->unique('receiver_id');
+            // dd($newMessageforAdmin);
+            $adminIds = Signup::where('role', 'admin')->pluck('id')->toArray();
+            $super_admin = Signup::where('role', 'super admin')->pluck('id')->toArray();
             // dd($newMessageforAdmin);
             foreach ($newMessageforAdmin as $message) {
+                $receiverId = $message->admin_id;  // Access the receiver_id
+            }
+            if (in_array($receiverId, $adminIds)) {
+
                 Message::create([
                     'admin_id' => Auth::id(),  // current admin's ID
                     'admin_name' => Auth::user()->name,  // current admin's name
-                    'receiver_id' => $message->admin_id,  // super admin's ID
+                    'receiver_id' => $receiverId,  // super admin's ID
                     'message' => 'New data has been Approved by Super admin.',
                     'division' => $message->division,
                     'district' => $message->district,
@@ -79,11 +87,12 @@ class PhpSpreadsheetController extends Controller
                 ]);
             }
 
+
             Message::where('division', $division)
                 ->where('district', $district)
                 ->where('upazila', $upazila)
                 ->where('year', $year)
-                ->where('receiver_id', Auth::id())
+                ->whereIn('receiver_id', $super_admin)
                 ->delete();
 
             // return response()->json(['status' => 'success', 'message' => 'Data updated successfully']);
@@ -92,6 +101,9 @@ class PhpSpreadsheetController extends Controller
             return redirect()->back()->with('success', 'Failed to update data');
         }
     }
+
+
+
 
     public function getData(Request $request)
     {
