@@ -26,9 +26,138 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Message;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Spreadsheet;
 
 class PhpSpreadsheetController extends Controller
 {
+    // super admin rejection message 
+    public function rejectMessage(Request $request, $division, $district, $upazila, $year)
+    {
+        $rejectionMessage = $request->input('message');
+        $newMessageforAdmin = Message::where('division', $division)
+            ->where('district', $district)
+            ->where('upazila', $upazila)
+            ->where('year', $year)
+            ->get()
+            ->unique('receiver_id');
+        // dd($newMessageforAdmin);
+        $adminIds = Signup::where('role', 'admin')->pluck('id')->toArray();
+        $super_admin = Signup::where('role', 'super admin')->pluck('id')->toArray();
+        // dd($newMessageforAdmin);
+        foreach ($newMessageforAdmin as $message) {
+            $receiverId = $message->admin_id;  // Access the receiver_id
+        }
+
+        Message::create([
+            'admin_id' => Auth::id(),  // current admin's ID
+            'admin_name' => Auth::user()->name,  // current admin's name
+            'receiver_id' => $receiverId,  // super admin's ID
+            'message' => $rejectionMessage,
+            'division' => $division,
+            'district' => $district,
+            'upazila' => $upazila,
+            'year' => $year,
+        ]);
+
+        Message::where('division', $division)
+        ->where('district', $district)
+        ->where('upazila', $upazila)
+        ->where('year', $year)
+        ->whereIn('receiver_id', $super_admin)
+        ->delete();
+
+        SoilData::where('division', $division)
+        ->where('district', $district)
+        ->where('upazila', $upazila)
+        ->where('year', $year)
+        ->delete();
+        
+        return response()->json(['success' => true]);
+    }
+
+    // super admin data download function
+    public function downloadExcel($division, $district, $upazila, $year)
+    {
+        $query = \App\Models\SoilData::query();
+
+        if ($division) {
+            $query->where('division', $division);
+        }
+        if ($district) {
+            $query->where('district', $district);
+        }
+        if ($upazila) {
+            $query->where('upazila', $upazila);
+        }
+        if ($year) {
+            $query->where('year', $year);
+        }
+
+        $data = $query->get();
+        if ($data->isEmpty()) {
+            // If no data is found, return with a success message
+            return redirect()->back()->with('success', 'No Soil Data Found for the selected criteria!');
+        }
+        // Generate CSV content
+        $csvFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
+        $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
+
+        // Return the response with the CSV file
+        return response()->stream(
+            function () use ($data, $headers) {
+                $handle = fopen('php://output', 'w');
+
+                // Handle fopen failure
+                if ($handle === false) {
+                    return response()->json(['error' => 'Could not open output stream'], 500);
+                }
+
+                // Add the headers
+                fputcsv($handle, $headers);
+
+                // Add the data rows
+                foreach ($data as $row) {
+                    fputcsv($handle, [
+                        $row->division,
+                        $row->district,
+                        $row->upazila,
+                        $row->fid,
+                        $row->smpl_no,
+                        $row->mu,
+                        $row->land_type,
+                        $row->soil_series,
+                        $row->soil_group,
+                        $row->texture,
+                        $row->ec,
+                        $row->ph,
+                        $row->ea,
+                        $row->om,
+                        $row->n,
+                        $row->po,
+                        $row->pb,
+                        $row->k,
+                        $row->s,
+                        $row->zn,
+                        $row->b,
+                        $row->ca,
+                        $row->mg,
+                        $row->cu,
+                        $row->fe,
+                        $row->mn,
+                        $row->upz_code,
+                        $row->year
+                    ]);
+                }
+
+                fclose($handle);
+            },
+            200,
+            [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
+            ]
+        );
+    }
 
     public function deleteMessage($id)
     {
@@ -101,9 +230,6 @@ class PhpSpreadsheetController extends Controller
             return redirect()->back()->with('success', 'Failed to update data');
         }
     }
-
-
-
 
     public function getData(Request $request)
     {

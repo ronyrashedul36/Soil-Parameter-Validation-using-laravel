@@ -1,16 +1,22 @@
 @include('header')
-
 @include('navigation')
+
+<!-- Include DataTables CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
 
 <style>
     #upazila_nirdesikas th,
-    #upazila_nirdesikas td {
+    #feedback th,
+    #upazila_nirdesikas td,
+    #feedback td {
         text-align: center;
         vertical-align: middle;
-        /* Optional: Vertically center content as well */
+    }
+    .alert {
+        display: none; /* Initially hidden */
     }
 </style>
-
 
 @if (Auth::check() && Auth::user()->role == 'super admin')
 <div class="container">
@@ -27,14 +33,11 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </div>
-
 @endif
-
 
 @if (Auth::check() && Auth::user()->role == 'admin')
 <div class="container">
@@ -51,84 +54,146 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </div>
-
 @endif
-<script type="text/javascript">
-    $(document).ready(function() {
-        function fetchData() {
-            $.ajax({
-                url: "{{ route('PhpSpreadsheetController.getData') }}", // The Laravel route
-                type: "GET", // HTTP method
-                dataType: "json", // The type of data expected back from the server
-                success: function(data) {
-                    let tableBody = $('#upazila_nirdesikas tbody');
-                    tableBody.empty(); // Clear any existing rows
 
-                    $.each(data, function(index, item) {
-                        if (item.division && item.district && item.upazila && item.year) {
-                            let approveUrl = `{{ url('/updateMessageAndsoilData') }}/${item.division}/${item.district}/${item.upazila}/${item.year}`;
-                            let row = `<tr>
-                            <td>${item.division}</td>
-                            <td>${item.district}</td>
-                            <td>${item.upazila}</td>
-                            <td><a href="#">Download</a></td>
-                            <td>${item.year}</td>
-                            <td>
-                                <a href="${approveUrl}" class="btn btn-primary editbtn m-0" style="font-size:15px; display: inline-block;">Approve</a>
-                                <form action="#" method="post" style="display: inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger m-0" style="font-size:15px;" onclick="return confirm('Are you sure you want to delete this item?')">Reject</button>
-                                </form>
-                            </td>
-                        </tr>`;
-                            tableBody.append(row);
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error: " + status + error);
-                }
-            });
-        }
 
-        // Fetch data when the document is ready
-        fetchData();
-    });
-</script>
+<!-- Rejection Modal -->
+<div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectionModalLabel">Rejection Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="rejectionForm">
+                    @csrf
+                    <div class="form-group">
+                        <label for="rejectionMessage">Reason for Rejection:</label>
+                        <textarea class="form-control" id="rejectionMessage" name="rejectionMessage" rows="3" required></textarea>
+                    </div>
+                    <input type="hidden" id="rejectionUrl" name="rejectionUrl">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="sendRejection">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function() {
-        $('#upazila_nirdesikas').DataTable();
-    });
-</script>
+        var userRole = "{{ Auth::check() ? Auth::user()->role : '' }}";
 
+        // Fetch appropriate data based on user role
+        if (userRole === 'super admin') {
+            fetchSuperAdminData();
+        } else if (userRole === 'admin') {
+            fetchAdminData();
+        }
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        function fetchData() {
+        // Rejection Modal Logic
+        $(document).on('click', '.rejectBtn', function() {
+            let rejectUrl = $(this).data('url');
+            $('#rejectionUrl').val(rejectUrl);
+            $('#rejectionModal').modal('show');
+        });
+
+        $('#sendRejection').click(function() {
+            let rejectionMessage = $('#rejectionMessage').val();
+            let rejectionUrl = $('#rejectionUrl').val();
+
+            if (rejectionMessage.trim() === '') {
+                alert('Please provide a reason for rejection.');
+                return;
+            }
+
             $.ajax({
-                url: "{{ route('PhpSpreadsheetController.getData') }}", // The Laravel route
-                type: "GET", // HTTP method
-                dataType: "json", // The type of data expected back from the server
-                success: function(data) {
-                    let tableBody = $('#feedback tbody');
-                    tableBody.empty(); // Clear any existing rows
+                url: rejectionUrl,
+                type: 'POST',
+                data: {
+                    _token: $('input[name="_token"]').val(),
+                    message: rejectionMessage
+                },
+                success: function(response) {
+                    $('#rejectionModal').modal('hide');
+                    alert('Rejection message sent successfully.');
 
-                    $.each(data, function(index, item) {
-                        if (!item.id) {
-                            console.error('Item id is missing or undefined:', item);
-                            return; // Skip this iteration if id is missing
-                        }
-                        if (item.division && item.district && item.upazila && item.year) {
-                            let approveUrl = `{{ url('/updateMessageAndsoilData') }}/${item.division}/${item.district}/${item.upazila}/${item.year}`;
-                            let deleteUrl = `{{ url('/deleteMessage')}}/${item.id}`;
-                            let row = `<tr>
+                    // Refresh data based on user role
+                    if (userRole === 'super admin') {
+                        fetchSuperAdminData();
+                    } else if (userRole === 'admin') {
+                        fetchAdminData();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error: " + status + error);
+                    alert('Failed to send the rejection message. Please try again.');
+                }
+            });
+        });
+    });
+
+    function fetchSuperAdminData() {
+        $.ajax({
+            url: "{{ route('PhpSpreadsheetController.getData') }}",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                let tableBody = $('#upazila_nirdesikas tbody');
+                tableBody.empty();
+
+                $.each(data, function(index, item) {
+                    if (item.division && item.district && item.upazila && item.year) {
+                        let downloadUrl = `{{ url('/download')}}/${item.division}/${item.district}/${item.upazila}/${item.year}`;
+                        let approveUrl = `{{ url('/updateMessageAndsoilData') }}/${item.division}/${item.district}/${item.upazila}/${item.year}`;
+                        let rejectUrl = `{{url('/rejectMessage')}}/${item.division}/${item.district}/${item.upazila}/${item.year}`;
+                        let row = `<tr>
+                            <td>${item.division}</td>
+                            <td>${item.district}</td>
+                            <td>${item.upazila}</td>
+                            <td><a href="${downloadUrl}">Download</a></td>
+                            <td>${item.year}</td>
+                            <td>
+                                <a href="${approveUrl}" class="btn btn-primary m-0">Approve</a>
+                                <button type="button" class="btn btn-danger m-0 rejectBtn" data-url="${rejectUrl}">Reject</button>
+                            </td>
+                        </tr>`;
+                        tableBody.append(row);
+                    }
+                });
+
+                if (!$.fn.DataTable.isDataTable('#upazila_nirdesikas')) {
+                    $('#upazila_nirdesikas').DataTable();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: " + status + error);
+            }
+        });
+    }
+
+    function fetchAdminData() {
+        $.ajax({
+            url: "{{ route('PhpSpreadsheetController.getData') }}",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                let tableBody = $('#feedback tbody');
+                tableBody.empty();
+
+                $.each(data, function(index, item) {
+                    if (item.division && item.district && item.upazila && item.year) {
+                        let deleteUrl = `{{ url('/deleteMessage')}}/${item.id}`;
+                        let row = `<tr>
                             <td>${item.division}</td>
                             <td>${item.district}</td>
                             <td>${item.upazila}</td>
@@ -138,43 +203,31 @@
                                 <form action="${deleteUrl}" method="post" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger m-0" style="font-size:15px;" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
+                                    <button type="submit" class="btn btn-danger m-0" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
                                 </form>
                             </td>
                         </tr>`;
-                            tableBody.append(row);
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error: " + status + error);
+                        tableBody.append(row);
+                    }
+                });
+
+                if (!$.fn.DataTable.isDataTable('#feedback')) {
+                    $('#feedback').DataTable();
                 }
-            });
-        }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: " + status + error);
+            }
+        });
+    }
 
-        // Fetch data when the document is ready
-        fetchData();
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('#feedback').DataTable();
-    });
-</script>
-
-<script>
-    // Wait for the DOM to be fully loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        // Find the success alert element
-        var successAlert = document.getElementById('success-alert');
-        // If the success alert exists, set a timeout to hide it after 5 seconds (5000 milliseconds)
-        if (successAlert) {
-            setTimeout(function() {
-                successAlert.style.display = 'none';
-            }, 5000); // 5000 milliseconds = 5 seconds
-        }
-    });
+    // Hide success alerts after 5 seconds
+    var successAlert = document.getElementById('success-alert');
+    if (successAlert) {
+        setTimeout(function() {
+            successAlert.style.display = 'none';
+        }, 5000);
+    }
 </script>
 
 @include('institutionlogo')

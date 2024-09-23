@@ -52,6 +52,11 @@ Route::get('/updateMessageAndsoilData/{division}/{district}/{upazila}/{year}', [
 
 Route::delete('/deleteMessage/{id}', [PhpSpreadsheetController::class, 'deleteMessage'])->name('PhpSpreadsheetController.deleteMessage');
 
+// super admin data  download
+Route::get('/download/{division}/{district}/{upazila}/{year}', [PhpSpreadsheetController::class, 'downloadExcel'])->name('PhpSpreadsheetController.downloadExcel');
+
+Route::post('/rejectMessage/{division}/{district}/{upazila}/{year}', [PhpSpreadsheetController::class, 'rejectMessage'])->name('PhpSpreadsheetController.rejectMessage');
+
 
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');
