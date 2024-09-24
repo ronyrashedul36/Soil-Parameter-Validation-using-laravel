@@ -196,7 +196,7 @@
             </div>
         </div>
     </div>
-
+    @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
     <div class="container mt-2">
         <h4 class="form-label-custom mb-4">Soil Data Input Form</h4>
         <form action="{{ route('PhpSpreadsheetController.storeSoilData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
@@ -330,20 +330,46 @@
                 </div>
             </div>
             <button type="submit" class="btn btn-primary mt-4 mb-4">Submit</button>
+            <button type="" id="SendRequestToApprove" class="btn btn-primary mt-4 mb-4" title="Send Request to approve">Send Request</button>
         </form>
     </div>
-
+    @else
+    @include('visitors')
+    @endif
     @include('institutionlogo')
+    <script>
+        $(document).ready(function() {
+            $('#SendRequestToApprove').on('click', function(event) {
+                event.preventDefault();
 
-    <!-- <footer>
-        <span class="small">
-            Copyright &copy; <script>
-                document.write(new Date().getFullYear())
-            </script>,
-            Bangladesh Agricultural Research Council.<br>
-            Developed and maintained by Computer and GIS unit, Bangladesh Agricultural Research Council.
-        </span>
-    </footer> -->
+                var division = $('#division').val();
+                var district = $('#district').val();
+                var upazila = $('#upazila').val();
+                var year = $('#year').val();
+                if (division && district && upazila && year) {
+                    $.ajax({
+                        url: '{{route("PhpSpreadsheetController.approveRequest")}}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{csrf_token()}}',
+                            division: division,
+                            district: district,
+                            upazila: upazila,
+                            year: year
+                        },
+                        success: function(response) {
+                            document.getElementById('responseMessage').innerHTML = '<div class="alert alert-success">' + response.message + '</div>';
+                        },
+                        error: function(xhr, status, error) {
+                            document.getElementById('responseMessage').innerHTML = '<div class="alert alert-danger">' + xhr.responseJSON.message + '</div>';
+                        }
+                    });
+                } else {
+                    alert('Please fill in all required fields');
+                }
+            });
+        });
+    </script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -440,6 +466,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Find the success alert element
             var successAlert = document.getElementById('success-alert');
+            
             // If the success alert exists, set a timeout to hide it after 5 seconds (5000 milliseconds)
             if (successAlert) {
                 setTimeout(function() {
@@ -448,6 +475,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>

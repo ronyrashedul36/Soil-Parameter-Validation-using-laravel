@@ -179,7 +179,9 @@
                         <th>Upazila</th>
                         <th>Download</th>
                         <th>Year</th>
+                        @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                         <th>Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -190,6 +192,7 @@
                         <td>{{ $item->Upazila }}</td>
                         <td><a href="{{ url('/download', $item->FilePath) }}">Download</a></td>
                         <td>{{ $item->Year }}</td>
+                        @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                         <td>
 
                             <a href="{{url('/edit', $item->id)}}" class="btn btn-primary editbtn">Edit</a>
@@ -199,6 +202,7 @@
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
                             </form>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>

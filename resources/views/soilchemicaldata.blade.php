@@ -214,7 +214,9 @@
                             <th>mn</th>
                             <th>upz_code</th>
                             <th>year</th>
+                            @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                             <th>Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -252,6 +254,7 @@
                             <td>{{ $item->mn }}</td>
                             <td>{{ $item->upz_code }}</td>
                             <td>{{ $item->year }}</td>
+                            @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                             <td>
                                 <div class="d-flex">
                                     <a href="{{url('/editsoilchemicaldata', $item->id)}}" class="btn btn-primary me-2 btn-custom btn-gap editbtn">Edit</a>
@@ -262,6 +265,7 @@
                                     </form>
                                 </div>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>

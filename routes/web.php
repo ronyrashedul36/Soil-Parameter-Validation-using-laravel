@@ -57,6 +57,7 @@ Route::get('/download/{division}/{district}/{upazila}/{year}', [PhpSpreadsheetCo
 
 Route::post('/rejectMessage/{division}/{district}/{upazila}/{year}', [PhpSpreadsheetController::class, 'rejectMessage'])->name('PhpSpreadsheetController.rejectMessage');
 
+Route::post('/approveRequest', [PhpSpreadsheetController::class, 'approveRequest'])->name('PhpSpreadsheetController.approveRequest');
 
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');

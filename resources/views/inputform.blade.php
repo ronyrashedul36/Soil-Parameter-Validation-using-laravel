@@ -138,7 +138,7 @@
             </div>
         </div>
     </div>
-
+    @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
     <div class="container mt-3">
         <h4 class="mb-4 text-center text-primary">Upazila Nirdesikha</h4>
         <form action="/submit" method="post" enctype="multipart/form-data">
@@ -199,6 +199,10 @@
             </div>
         </form>
     </div>
+    @else
+    @include('visitors')
+    @endif
+
 
 
     @include('institutionlogo')

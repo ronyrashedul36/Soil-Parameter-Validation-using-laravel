@@ -30,6 +30,70 @@ use App\Http\Controllers\Spreadsheet;
 
 class PhpSpreadsheetController extends Controller
 {
+    public function approveRequest(Request $request)
+    {
+        $request->validate([
+            'division' => 'required|string',
+            'district' => 'required|string',
+            'upazila' => 'required|string',
+            'year' => 'required|numeric|min:1900|max:2500',
+        ]);
+
+        $division = $request->input('division');
+        $district = $request->input('district');
+        $upazila = $request->input('upazila');
+        $year = $request->input('year');
+        // Step 1: Check if data exists in the SoilData table
+        $soilDataExists = SoilData::where('division', $division)
+            ->where('district', $district)
+            ->where('upazila', $upazila)
+            ->where('year', $year)
+            ->exists();
+        if (!$soilDataExists) {
+            return response()->json(['message' => 'No matching data found in the Database.'], 200);
+        }
+        // Check the user's role
+        if (Auth::user()->role == 'admin') {
+            // Step 2: Check if a message for the same combination already exists
+            $existingMessage = Message::where('division', $division)
+                ->where('district', $district)
+                ->where('upazila', $upazila)
+                ->where('year', $year)
+                ->where('admin_id', Auth::id()) // Ensure the message is from the same admin
+                ->exists();
+
+            if (!$existingMessage) {
+                // Step 3: Get all super admins
+                $superAdmins = Signup::where('role', 'super admin')->get();
+
+                // Step 4: Send a single message to all super admins
+                foreach ($superAdmins as $superAdmin) {
+                    Message::create([
+                        'admin_id' => Auth::id(),  // current admin's ID
+                        'admin_name' => Auth::user()->name,  // current admin's name
+                        'receiver_id' => $superAdmin->id,  // super admin's ID
+                        'message' => 'New data has been inserted by ' . Auth::user()->name,
+                        'division' =>  $division,
+                        'district' => $district,
+                        'upazila' => $upazila,
+                        'year' => $year,
+                    ]);
+                }
+            }
+        }
+
+        if (Auth::user()->role == 'super admin') {
+            SoilData::where('division', $division)
+                ->where('district', $district)
+                ->where('upazila', $upazila)
+                ->where('year', $year)
+                ->update(['approval' => 'Approved']);
+        }
+        return response()->json(['message' => 'Request sent successfully!'], 200);
+        // Redirect back with a success message
+        // return redirect()->back()->with('success', 'Request sent successfully!');
+    }
+
     // super admin rejection message 
     public function rejectMessage(Request $request, $division, $district, $upazila, $year)
     {
@@ -60,18 +124,18 @@ class PhpSpreadsheetController extends Controller
         ]);
 
         Message::where('division', $division)
-        ->where('district', $district)
-        ->where('upazila', $upazila)
-        ->where('year', $year)
-        ->whereIn('receiver_id', $super_admin)
-        ->delete();
+            ->where('district', $district)
+            ->where('upazila', $upazila)
+            ->where('year', $year)
+            ->whereIn('receiver_id', $super_admin)
+            ->delete();
 
         SoilData::where('division', $division)
-        ->where('district', $district)
-        ->where('upazila', $upazila)
-        ->where('year', $year)
-        ->delete();
-        
+            ->where('district', $district)
+            ->where('upazila', $upazila)
+            ->where('year', $year)
+            ->delete();
+
         return response()->json(['success' => true]);
     }
 
@@ -208,7 +272,7 @@ class PhpSpreadsheetController extends Controller
                     'admin_id' => Auth::id(),  // current admin's ID
                     'admin_name' => Auth::user()->name,  // current admin's name
                     'receiver_id' => $receiverId,  // super admin's ID
-                    'message' => 'New data has been Approved by Super admin.',
+                    'message' => 'New data has been Approved by '. Auth::user()->name,
                     'division' => $message->division,
                     'district' => $message->district,
                     'upazila' => $message->upazila,
@@ -981,6 +1045,14 @@ class PhpSpreadsheetController extends Controller
                     'year' => $validatedData['year'],
                 ]);
             }
+        }
+
+        if (Auth::user()->role == 'super admin') {
+            SoilData::where('division', $validatedData['division'])
+                ->where('district', $validatedData['district'])
+                ->where('upazila', $validatedData['upazila'])
+                ->where('year', $validatedData['year'])
+                ->update(['approval' => 'Approved']);
         }
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Soil Data Submitted Successfully!');

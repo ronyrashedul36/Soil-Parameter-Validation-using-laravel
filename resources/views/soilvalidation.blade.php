@@ -160,7 +160,7 @@
         </nav>
 
     </div>
-
+    @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
     <div class="container">
         <div class="row">
             <div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 10px; display: flex; justify-content: flex-start;">
@@ -275,6 +275,9 @@
             <button type="submit" class="btn btn-primary mt-4 mb-4">Submit</button>
         </form>
     </div>
+    @else
+    @include('visitors')
+    @endif
 
     @include('institutionlogo')
 
