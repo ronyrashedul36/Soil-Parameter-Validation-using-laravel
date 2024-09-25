@@ -11,7 +11,6 @@ use App\Models\soil_data;
 class UpazilaNirdesikhaController extends Controller
 {
 
-
     public function store(Request $request)
     {
         $data = $request->validate([

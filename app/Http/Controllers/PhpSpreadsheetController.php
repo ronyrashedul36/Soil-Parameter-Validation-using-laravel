@@ -30,6 +30,28 @@ use App\Http\Controllers\Spreadsheet;
 
 class PhpSpreadsheetController extends Controller
 {
+
+    public function getUpazilaNirdesikhaCount()
+    {
+        // Query the database to get soil chemical data
+        $totalDistinctUpazilaNirdesikha = UpazilaNirdesika::select('Upazila')
+            ->distinct()
+            ->count('Upazila');
+
+        return response()->json(['totalDistinctUpazilaNirdesikha' => $totalDistinctUpazilaNirdesikha]);
+    }
+    // Example controller function
+    public function getSoilChemicalDataCount()
+    {
+        // Query the database to get soil chemical data
+        $totalDistinctUpazilas = SoilData::select('upazila')
+            ->distinct()
+            ->count('upazila');
+
+        return response()->json(['totalDistinctUpazilas' => $totalDistinctUpazilas]);
+    }
+
+
     public function approveRequest(Request $request)
     {
         $request->validate([
@@ -272,7 +294,7 @@ class PhpSpreadsheetController extends Controller
                     'admin_id' => Auth::id(),  // current admin's ID
                     'admin_name' => Auth::user()->name,  // current admin's name
                     'receiver_id' => $receiverId,  // super admin's ID
-                    'message' => 'New data has been Approved by '. Auth::user()->name,
+                    'message' => 'New data has been Approved by ' . Auth::user()->name,
                     'division' => $message->division,
                     'district' => $message->district,
                     'upazila' => $message->upazila,

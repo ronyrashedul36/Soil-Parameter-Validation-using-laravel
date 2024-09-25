@@ -54,13 +54,11 @@
         .logo {
             background-color: transparent; /* No background color */
         }
+
     </style>
 </head>
 
 <body>
-
-
-    <!-- Bottom section with logo and footer -->
     <div class="bottom-section">
         <div class="container text-center">
             <img src="http://srdi.teletalk.com.bd/images/sdri_logo.png" class="logo" height="100" width="100" alt="SDRI Logo">
@@ -74,6 +72,7 @@
                 </script>, Bangladesh Agricultural Research Council.
                 <br>
                 Developed and maintained by Computer and GIS unit, Bangladesh Agricultural Research Council.
+
             </span>
         </footer>
     </div>

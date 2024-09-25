@@ -59,6 +59,12 @@ Route::post('/rejectMessage/{division}/{district}/{upazila}/{year}', [PhpSpreads
 
 Route::post('/approveRequest', [PhpSpreadsheetController::class, 'approveRequest'])->name('PhpSpreadsheetController.approveRequest');
 
+
+Route::get('/getUpazilaNirdesikhaCount', [PhpSpreadsheetController::class, 'getUpazilaNirdesikhaCount'])->name('PhpSpreadsheetController.getUpazilaNirdesikhaCount');
+Route::get('/getSoilChemicalDataCount', [PhpSpreadsheetController::class, 'getSoilChemicalDataCount'])->name('PhpSpreadsheetController.getSoilChemicalDataCount');
+
+
+
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');
 });

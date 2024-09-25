@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
     <!-- DataTables JS -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body {
@@ -25,9 +25,7 @@
             flex-direction: column;
             min-height: 100vh;
             margin: 0;
-            /* Remove default margin */
             padding: 0;
-            /* Remove default padding */
         }
 
         footer {
@@ -40,18 +38,17 @@
             width: 100%;
         }
 
-
         .flex-container {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            font-family: 'Times New Roman', Times, serif;
         }
 
         .navbar-nav .nav-item:hover .dropdown-menu {
             display: block;
         }
 
-        /* Optional: Adds a bit of padding to the dropdown items */
         .dropdown-menu {
             padding: 0.5rem;
         }
@@ -64,43 +61,33 @@
             width: 100%;
             justify-content: space-around;
         }
+
+        #soilPieChart,
+        #nirdesikhaPieChart {
+            width: 250px;
+            height: 250px;
+            margin-top: 20px;
+        }
+
+        #chart-label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
-
-    <!-- <div class="container">
-        <div class="row">
-
-            <div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 10px; display: flex; justify-content: flex-end;">
-                <img src="http://apps.barc.gov.bd/flipbook/flipbook/images/barc-logo.png?>" width="100" height="100" alt="">
-            </div>
-            <div class="col-lg-9 col-md-9 col-sm-9 text-center" style="margin-top: 20px;">
-                <h2>Bangladesh Agricultural Research Council (BARC)</h2>
-                <h3>New Airport Road, Farmgate, Dhaka - 1215</h3>
-            </div>
-            <div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: 10px; display: flex; justify-content: flex-end; align-items: left;">
-
-            </div>
-        </div>
-    </div> -->
-
-
     @include('header')
 
     <div class="container mt-2">
-
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
-                
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-               
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                       
                         <li class="nav-item">
                             <a class="nav-link" href="/home">Home</a>
                         </li>
@@ -115,7 +102,6 @@
                                 <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                             </div>
                         </li>
-
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Upazila Nirdesika
@@ -126,7 +112,6 @@
                                 <a class="dropdown-item" href="/upazilanirdesikareport">Report</a>
                             </div>
                         </li>
-
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Soil Physical Data
@@ -135,7 +120,6 @@
                                 <a class="dropdown-item" href="#">Upload Data</a>
                             </div>
                         </li>
-
                         <li class="nav-item">
                             <a class="nav-link" href="#">Soil Profile</a>
                         </li>
@@ -148,24 +132,140 @@
         </nav>
         <br>
 
-
         @if(Session::has('success'))
         <div class="alert alert-success" role="alert" id="success-alert">
             {{ Session::get('success') }}
         </div>
         @endif
-
     </div>
 
-    @include('institutionlogo')
+    <div class="container mt-5">
+        <div class="flex-container d-flex justify-content-center">
+            <div class="row" style="font-family: 'Times New Roman', Times, serif; text-align: center;">
+                <div class="col-md-6 mb-4">
+                    <h4>Soil Chemical Data</h4>
+                    <div id="upazilaCount" style="font-size: 18px; margin-top: 10px;"></div>
+                    <canvas id="soilPieChart"></canvas>
+                </div>
 
+                <div class="col-md-6">
+                    <h4>Upazila Nirdesikha Data</h4>
+                    <div id="upazilaNirdesikhaCount" style="font-size: 18px; margin-top: 10px;"></div>
+                    <canvas id="nirdesikhaPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <br>
+    <br>
+    <br>
+
+    <script>
+        // Function to fetch the uploaded upazilas from Laravel
+        fetch('/getUpazilaNirdesikhaCount')
+            .then(response => response.json())
+            .then(data => {
+                const totalDistinctUpazilas = 495 - data.totalDistinctUpazilaNirdesikha; // Total distinct upazilas in Bangladesh
+                const uploadedUpazilas = data.totalDistinctUpazilaNirdesikha; // Ensure this property exists in the response
+                const ctx = document.getElementById('nirdesikhaPieChart').getContext('2d');
+
+                const nirdesikhaPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Total No. of Upazila', 'Uploaded No. of Upazila'], // Labels for the pie chart
+                        datasets: [{
+                            label: 'No. of Upazila',
+                            data: [totalDistinctUpazilas, uploadedUpazilas], // Data for the chart
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.2)', // Color for total upazilas
+                                'rgba(255, 99, 132, 0.2)' // Color for uploaded upazilas
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)', // Border color for total upazilas
+                                'rgba(255, 99, 132, 1)' // Border color for uploaded upazilas
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, // Enable responsiveness
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom', // Position of the legend
+                                align: 'middle',
+                                labels: {
+                                    usePointStyle: true, // Use point style for labels
+                                    padding: 20 // Add padding between legend items
+                                }
+                            },
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('There was an issue fetching the Nirdesikha data. Please try again later.'); // User-friendly error message
+            });
+    </script>
+
+    <script>
+        // Function to fetch the uploaded upazilas from Laravel
+        fetch('/getSoilChemicalDataCount')
+            .then(response => response.json())
+            .then(data => {
+                const totalDistinctUpazilas = 495 - data.totalDistinctUpazilas; // Total distinct upazilas in Bangladesh
+                const uploadedUpazilas = data.totalDistinctUpazilas; // Fetch uploaded upazila count
+                const ctx = document.getElementById('soilPieChart').getContext('2d');
+                const soilPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Total No. of Upazila', 'Uploaded No. of Upazila'], // Labels for the pie chart
+                        datasets: [{
+                            label: 'No. of Upazila',
+                            data: [totalDistinctUpazilas, uploadedUpazilas], // Data for the chart
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.2)', // Color for total upazilas
+                                'rgba(255, 99, 132, 0.2)' // Color for uploaded upazilas
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)', // Border color for total upazilas
+                                'rgba(255, 99, 132, 1)' // Border color for uploaded upazilas
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: false, // Disable responsiveness to honor canvas size
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom', // Position of the legend
+                                align: 'middle',
+                                labels: {
+                                    usePointStyle: true, // Use point style for labels
+                                    padding: 20 // Add padding between legend items
+                                }
+                            },
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+
+
+
+
+    @include('institutionlogo')
 
     <script>
         // Wait for the DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Find the success alert element
             var successAlert = document.getElementById('success-alert');
-            // If the success alert exists, set a timeout to hide it after 5 seconds (5000 milliseconds)
             if (successAlert) {
                 setTimeout(function() {
                     successAlert.style.display = 'none';
@@ -178,13 +278,8 @@
         $(document).ready(function() {
             $('#upazila_nirdesikas').DataTable();
         });
-
     </script>
 
-
-
 </body>
-
-
 
 </html>
