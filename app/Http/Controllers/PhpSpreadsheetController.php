@@ -27,9 +27,55 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Message;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Spreadsheet;
+use App\Models\SoilPhysicalData;
 
 class PhpSpreadsheetController extends Controller
 {
+
+    public function uploadSoilPhysicalData(Request $request)
+    {
+        // Validation rules
+        $request->validate([
+            'division' => 'required|string',
+            'district' => 'required|string',
+            'upazila' => 'required|string',
+            'year' => 'required|numeric|min:1900|max:2500',
+            'land_type' => 'required|string|max:255',
+            'soil_group' => 'required|string|max:255',
+            'sg_area' => 'required|string|max:255',
+            'texture' => 'required|string|max:255',
+            'consistency' => 'required|string|max:255',
+            'drainage' => 'required|string|max:255',
+            'moisture' => 'required|string|max:255',
+            'recession' => 'required|string|max:255',
+            'relief' => 'required|string|max:255',
+        ]);
+
+        try {
+            // Storing the data
+            $soilPhysicalData = new SoilPhysicalData();
+            $soilPhysicalData->division = $request->division;
+            $soilPhysicalData->district = $request->district;
+            $soilPhysicalData->upazila = $request->upazila;
+            $soilPhysicalData->year = $request->year;
+            $soilPhysicalData->land_type = $request->land_type;
+            $soilPhysicalData->soil_group = $request->soil_group;
+            $soilPhysicalData->sg_area = $request->sg_area;
+            $soilPhysicalData->texture = $request->texture;
+            $soilPhysicalData->consistency = $request->consistency;
+            $soilPhysicalData->drainage = $request->drainage;
+            $soilPhysicalData->moisture = $request->moisture;
+            $soilPhysicalData->recession = $request->recession;
+            $soilPhysicalData->relief = $request->relief;
+
+            $soilPhysicalData->save();
+
+            // Success message
+            return redirect()->back()->with('success', 'Soil physical data has been successfully uploaded.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('success', 'An error occurred while uploading the data. Please try again later.');
+        }
+    }
 
     public function getUpazilaNirdesikhaCount()
     {

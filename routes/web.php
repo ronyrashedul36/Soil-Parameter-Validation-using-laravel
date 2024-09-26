@@ -63,7 +63,7 @@ Route::post('/approveRequest', [PhpSpreadsheetController::class, 'approveRequest
 Route::get('/getUpazilaNirdesikhaCount', [PhpSpreadsheetController::class, 'getUpazilaNirdesikhaCount'])->name('PhpSpreadsheetController.getUpazilaNirdesikhaCount');
 Route::get('/getSoilChemicalDataCount', [PhpSpreadsheetController::class, 'getSoilChemicalDataCount'])->name('PhpSpreadsheetController.getSoilChemicalDataCount');
 
-
+Route::post('/uploadSoilPhysicalData', [PhpSpreadsheetController::class, 'uploadSoilPhysicalData'])->name('PhpSpreadsheetController.uploadSoilPhysicalData');
 
 Route::get('/soilchemicaldata', function() {
     return view('soilchemicaldata');
@@ -106,6 +106,10 @@ Route::get('/soilsinglerowdataentry', function(){
 });
 
 
+
+Route::get('/soilPhysicalData', function(){
+    return view('soilPhysicalData');
+});
 
 
 

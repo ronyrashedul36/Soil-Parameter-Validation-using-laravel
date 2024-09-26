@@ -117,7 +117,7 @@
                                 Soil Physical Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Upload Data</a>
+                                <a class="dropdown-item" href="/soilPhysicalData">Upload Data</a>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -144,13 +144,13 @@
             <div class="row" style="font-family: 'Times New Roman', Times, serif; text-align: center;">
                 <div class="col-md-6 mb-4">
                     <h4>Soil Chemical Data</h4>
-                    <div id="upazilaCount" style="font-size: 18px; margin-top: 10px;"></div>
+                    <!-- <div id="upazilaCount" style="font-size: 18px; margin-top: 10px;"></div> -->
                     <canvas id="soilPieChart"></canvas>
                 </div>
 
                 <div class="col-md-6">
                     <h4>Upazila Nirdesikha Data</h4>
-                    <div id="upazilaNirdesikhaCount" style="font-size: 18px; margin-top: 10px;"></div>
+                    <!-- <div id="upazilaNirdesikhaCount" style="font-size: 18px; margin-top: 10px;"></div> -->
                     <canvas id="nirdesikhaPieChart"></canvas>
                 </div>
             </div>

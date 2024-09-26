@@ -47,10 +47,7 @@
 
         .footer-text {
             font-size: 16px;
-            /* Adjust font size for footer text */
         }
-
-        /* Ensure logos have no background color */
         .logo {
             background-color: transparent; /* No background color */
         }
