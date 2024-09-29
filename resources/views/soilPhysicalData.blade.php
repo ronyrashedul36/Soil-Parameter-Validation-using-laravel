@@ -5,6 +5,7 @@
 
 @include('navigation')
 
+@if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
 <div class="container mt-2">
     <h4 class="mb-5" style="font-family: 'Times New Roman', Times, serif; text-align: center;">Soil Data Input Form</h4>
     <form action="{{route('PhpSpreadsheetController.uploadSoilPhysicalData')}}" method="POST">
@@ -100,9 +101,15 @@
 </div>
 
 
+
+
 <br>
 <br>
 <br>
+
+@else
+@include('visitors')
+@endif
 </div>
 
 <script type="text/javascript">

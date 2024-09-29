@@ -136,14 +136,14 @@
 
 
     </div>
-    <div class="container mt-2">
+    <div class="container mt-2" style="font-family: 'Times New Roman', Times, serif; text-align: center;">
         <div class="row justify-content-center">
             <!-- Login Form -->
             <div class="col-md-4">
                 <h2 class="text-center mb-4">Login</h2>
                 <form action="{{ route('PhpSpreadsheetController.login') }}" method="POST">
-                @csrf    
-                <div class="mb-3">
+                    @csrf
+                    <div class="mb-3">
                         <label for="loginEmail" class="form-label">Email</label>
                         <input type="email" class="form-control" name="email" id="loginEmail" placeholder="Enter your email" onblur="check_email(this.id)" required>
                     </div>
@@ -156,7 +156,7 @@
             </div>
 
             <!-- Sign Up Form -->
-            <div class="col-md-6 offset-md-1">
+            <div class="col-md-6 offset-md-1" style="font-family: 'Times New Roman', Times, serif; text-align: center;">
                 <h2 class="text-center mb-4">Sign Up</h2>
                 <form action="{{ route('PhpSpreadsheetController.signin') }}" method="POST">
                     @csrf
@@ -179,11 +179,11 @@
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
                             </div>
-                            
+
                         </div>
                         <!-- Second Column -->
                         <div class="col-md-6">
-                        <div class="mb-3">
+                            <div class="mb-3">
                                 <label for="country" class="form-label">Country</label>
                                 <div class="form-group">
                                     <select name="country" class="form-control" id="country" required>
@@ -454,7 +454,8 @@
 
 
     <br>
-
+    <br>
+    <br>
     @include('institutionlogo')
 
     <!-- Bootstrap JS -->
