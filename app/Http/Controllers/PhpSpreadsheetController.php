@@ -31,7 +31,11 @@ use App\Models\SoilPhysicalData;
 
 class PhpSpreadsheetController extends Controller
 {
-
+    public function show()
+    {
+        $data = SoilPhysicalData::all();
+        return view('/soilPhysicalDataAll', compact('data'));
+    }
     public function uploadSoilPhysicalData(Request $request)
     {
         // Validation rules
@@ -712,19 +716,19 @@ class PhpSpreadsheetController extends Controller
         );
     }
 
-
-
-
     public function retrieveData(Request $request)
     {
+        // Validate the request data
         $validatedData = $request->validate([
             'division' => 'nullable|string|max:255',
             'district' => 'nullable|string|max:255',
             'upazila' => 'nullable|string|max:255',
             'year' => 'nullable|numeric',
         ]);
+
+        // Query the SoilData model based on filters
         $query = \App\Models\SoilData::query();
-        // Apply filters based on the validated data
+
         if (!empty($validatedData['division'])) {
             $query->where('division', $validatedData['division']);
         }
@@ -743,16 +747,65 @@ class PhpSpreadsheetController extends Controller
 
         // Execute the query and get the results
         $results = $query->get();
-        // dd($results);
-        if (!$results->isEmpty()) {
-            return redirect()->back()->with('success', 'Soil Data Found!');
-        } else {
-            return redirect()->back()->with('success', 'No Soil Data found for the provided criteria.');
-        }
 
-        // Return the results, for example, as a JSON response
-        return response()->json($results);
+        // If results found, return them in a JSON response
+        if (!$results->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Soil Data Found!',
+                'data' => $results
+            ]);
+        }
+        // If no results found, return a message in a JSON response
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Soil Data found for the provided criteria.',
+                'data' => []
+            ]);
+        }
     }
+
+
+
+    // public function retrieveData(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'division' => 'nullable|string|max:255',
+    //         'district' => 'nullable|string|max:255',
+    //         'upazila' => 'nullable|string|max:255',
+    //         'year' => 'nullable|numeric',
+    //     ]);
+    //     $query = \App\Models\SoilData::query();
+    //     // Apply filters based on the validated data
+    //     if (!empty($validatedData['division'])) {
+    //         $query->where('division', $validatedData['division']);
+    //     }
+
+    //     if (!empty($validatedData['district'])) {
+    //         $query->where('district', $validatedData['district']);
+    //     }
+
+    //     if (!empty($validatedData['upazila'])) {
+    //         $query->where('upazila', $validatedData['upazila']);
+    //     }
+
+    //     if (!empty($validatedData['year'])) {
+    //         $query->where('year', $validatedData['year']);
+    //     }
+
+    //     // Execute the query and get the results
+    //     $results = $query->get();
+    //     // dd($results);
+    //     if (!$results->isEmpty()) {
+    //         return redirect()->back()->with('success', 'Soil Data Found!');
+    //     } else {
+    //         return redirect()->back()->with('success', 'No Soil Data found for the provided criteria.');
+    //     }
+
+    //     // Return the results, for example, as a JSON response
+    //     return response()->json($results);
+    // }
 
     public function processFile(Request $request)
     {

@@ -118,6 +118,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilPhysicalData">Upload Data</a>
+                                <a class="dropdown-item" href="/soilPhysicalDataAll">Soil Physical Data</a>
                             </div>
                         </li>
                         <li class="nav-item">

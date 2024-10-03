@@ -124,6 +124,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/soilPhysicalData">Upload Data</a>
+                                <a class="dropdown-item" href="/soilPhysicalDataAll">Soil Physical Data</a>
                             </div>
                         </li>
 
@@ -146,12 +147,15 @@
         </div>
         @endif
 
+        <div class="alert alert-success" role="alert" id="success-alert" style="display:none">
+
+        </div>
 
     </div>
-
+    <!-- {{ route('PhpSpreadsheetController.retrieveData') }} -->
     <div class="container mt-2">
         <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Search Report</h4>
-        <form action="{{ route('PhpSpreadsheetController.retrieveData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
+        <form action="" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
                 <div class="col-md-4">
@@ -187,55 +191,90 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center mt-4">
-                <button type="submit" class="btn btn-primary mx-2">Search</button>
+                <button type="button" class="btn btn-primary mx-2" onclick="performSearch()">Search</button>
+                <button type="button" class="btn btn-primary mx-2" onclick="performDownload()">Download</button>
             </div>
         </form>
     </div>
 
+    <script>
+        function performSearch() {
+            var division = document.getElementById('division').value;
+            var district = document.getElementById('district').value;
+            var upazila = document.getElementById('upazila').value;
+            var year = document.getElementById('year').value;
 
-    <div class="container mt-2 mb-5">
-        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Download Report</h4>
-        <form action="{{ route('PhpSpreadsheetController.download') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
-            @csrf
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="division2" class="form-label">Division </label>
-                    <select class="form-select" id="division2" name="division2">
-                        <option value="">Select Division</option>
-                        <option value="Dhaka">Dhaka</option>
-                        <option value="Chattogram">Chattogram</option>
-                        <option value="Khulna">Khulna</option>
-                        <option value="Rajshahi">Rajshahi</option>
-                        <option value="Barishal">Barishal</option>
-                        <option value="Sylhet">Sylhet</option>
-                        <option value="Rangpur">Rangpur</option>
-                        <option value="Mymensingh">Mymensingh</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="district2" class="form-label">District </label>
-                    <select class="form-select" id="district2" name="district2">
-                        <option value="">Select District</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="upazila2" class="form-label">Upazila </label>
-                    <select class="form-select" id="upazila2" name="upazila2">
-                        <option value="">Select Upazila</option>
-                    </select>
-                </div>
+            var formData = {
+                division: division,
+                district: district,
+                upazila: upazila,
+                year: year,
+                _token: '{{ csrf_token() }}'
+            };
 
-                <div class="col-md-4">
-                    <label for="year" class="form-label">Year </label>
-                    <input type="number" class="form-control" id="year2" name="year2" min="1900" max="2500" step="1">
-                </div>
-            </div>
-            <div class="d-flex justify-content-center mt-4">
-                <button type="submit" class="btn btn-primary mx-2">Download</button>
-            </div>
-        </form>
-    </div>
+            $.ajax({
+                url: "{{ route('PhpSpreadsheetController.retrieveData') }}",
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Display message for 5 seconds
+                    var alertDiv = document.getElementById('success-alert');
+                    alertDiv.innerHTML = response.message;
 
+                    if(response.message === 'No Soil Data found for the provided criteria.') {
+                        alertDiv.className = 'alert alert-danger';
+                    } else {
+                        alertDiv.className = 'alert alert-success';
+                    }
+
+                    alertDiv.style.display = 'block';
+
+                    setTimeout(function() {
+                        alertDiv.style.display = 'none';
+                    }, 5000);
+                    if (response.success) {
+                        console.log(response.data); // Data available in response.data
+                    }
+                },
+                error: function(xhr) {
+                    var alertDiv = document.getElementById('success-alert');
+                    alertDiv.className = 'alert alert-danger';
+                    alertDiv.innerHTML = 'An error occurred. Please try again.';
+                    alertDiv.style.display = 'block';
+                    setTimeout(function() {
+                        alertDiv.style.display = 'none';
+                    }, 5000);
+                }
+            });
+        }
+    </script>
+
+    <!-- "{{ route('PhpSpreadsheetController.download') }}" -->
+
+
+    <script>
+        function performDownload() {
+            // Logic to handle download functionality
+            var formData = new FormData(document.getElementById('uploadForm1'));
+
+            // You can use AJAX here to trigger file download
+            console.log("Download function called with form data: ", formData);
+            // Example AJAX request for download
+            /*
+            $.ajax({
+                url: '/download-route',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    // Trigger file download here
+                    console.log(response);
+                }
+            });
+            */
+        }
+    </script>
 
     @include('institutionlogo')
     <script type="text/javascript">

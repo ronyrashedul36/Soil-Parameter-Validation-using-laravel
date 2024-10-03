@@ -112,10 +112,15 @@ Route::get('/soilPhysicalData', function(){
 });
 
 
+Route::get('/soilPhysicalDataAll', function(){
+    return view('soilPhysicalDataAll');
+});
+
 
 Route::post('/submit', [UpazilaNirdesikhaController::class, 'store'])->name('submit.form');
 
 Route::get('/demo', [UpazilaNirdesikhaController::class, 'show'])->name('upazila-nirdesika.show');
+Route::get('/soilPhysicalDataAll', [PhpSpreadsheetController::class, 'show'])->name('PhpSpreadsheetController.show');
 
 Route::get('/soilchemicaldata', [UpazilaNirdesikhaController::class, 'show1'])->name('soilchemicaldata.show1');
 
