@@ -57,12 +57,6 @@
             /* Adjust top margin */
         }
 
-        .form-label-custom {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
         .form-group {
             text-align: center;
         }
@@ -91,6 +85,7 @@
             width: 100%;
             justify-content: space-around;
         }
+    
     </style>
 
 
@@ -198,8 +193,8 @@
         </div>
     </div>
     @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
-    <div class="container mt-2">
-        <h4 class="form-label-custom mb-4">Soil Data Input Form</h4>
+    <div class="container mt-2 box">
+        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Soil Data Input Form</h4>
         <form action="{{ route('PhpSpreadsheetController.storeSoilData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
@@ -330,10 +325,12 @@
                     <input type="text" class="form-control" id="upz_code" name="upz_code">
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-4 mb-4">Submit</button>
-            <button type="" id="SendRequestToApprove" class="btn btn-primary mt-4 mb-4" title="Send Request to approve">Send Request</button>
+            <button type="submit" class="btn btn-primary mt-4">Submit</button>
+            <button type="" id="SendRequestToApprove" class="btn btn-primary mt-4" title="Send Request to approve">Send Request</button>
         </form>
     </div>
+    <br>
+    <br>
     @else
     @include('visitors')
     @endif

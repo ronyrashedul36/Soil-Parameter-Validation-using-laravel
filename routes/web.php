@@ -34,8 +34,9 @@ Route::post('/submit-soil-data', [PhpSpreadsheetController::class, 'retrieveData
 
 Route::post('/upazilanirdesikareport', [PhpSpreadsheetController::class, 'retrieveNirdesikaData'])->name('PhpSpreadsheetController.retrieveNirdesikaData');
 
-Route::post('/download', [PhpSpreadsheetController::class, 'download'])->name('PhpSpreadsheetController.download');
 
+Route::post('/downloadSoilReport', [PhpSpreadsheetController::class, 'downloadSoilReport'])->name('PhpSpreadsheetController.downloadSoilReport');
+Route::post('/download', [PhpSpreadsheetController::class, 'download'])->name('PhpSpreadsheetController.download');
 Route::post('/downloadNirdesikaData', [PhpSpreadsheetController::class, 'downloadNirdesikaData'])->name('PhpSpreadsheetController.downloadNirdesikaData');
 
 Route::post('/signin', [PhpSpreadsheetController::class, 'signin'])->name('PhpSpreadsheetController.signin');

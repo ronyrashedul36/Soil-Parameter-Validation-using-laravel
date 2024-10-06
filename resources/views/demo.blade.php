@@ -24,7 +24,12 @@
         #upazila_nirdesikas td {
             text-align: center;
             vertical-align: middle;
+            
             /* Optional: Vertically center content as well */
+        }
+        .form-label-custom {
+            font-weight: bold;
+            
         }
 
         body {
@@ -168,7 +173,8 @@
         </div>
         @endif
         <div class="flex-container">
-            <h4>List of Upazila Nirdesika</h4>
+        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">List of Upazila Nirdesika</h4>
+            <!-- <h4>List of Upazila Nirdesika</h4> -->
         </div>
 
         <div>

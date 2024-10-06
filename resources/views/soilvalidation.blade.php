@@ -91,6 +91,21 @@
             width: 100%;
             justify-content: space-around;
         }
+
+        .box {
+            border: 2px solid #007bff;
+            /* Change the color as needed */
+            border-radius: 8px;
+            /* Rounded corners */
+            padding: 20px;
+            /* Space inside the box */
+            margin-top: 20px;
+            /* Space above the box */
+            background-color: #f8f9fa;
+            /* Light background color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Optional shadow for depth */
+        }
     </style>
 
 
@@ -175,11 +190,8 @@
         </div>
     </div>
 
-    <br>
-    <br>
-    <br>
-
-    <div class="container">
+    <div class="container box">
+        <h3 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Soil Data Validation</h3>
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <!-- <form action="{{ route('PhpSpreadsheetController.upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm"> -->
@@ -194,25 +206,37 @@
                 </form>
             </div>
         </div>
-    </div>
-
-
-    <div class="container">
+        
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <button id="downloadButton" name="download" value="download" class="btn btn-success btn-block" onclick="downloadFile()" style="display:none">Download File</button>
             </div>
         </div>
-    </div>
 
-
-    <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div id="responseMessage" class="mt-3 text-center"></div>
             </div>
         </div>
     </div>
+
+
+    <!-- <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <button id="downloadButton" name="download" value="download" class="btn btn-success btn-block" onclick="downloadFile()" style="display:none">Download File</button>
+            </div>
+        </div>
+    </div> -->
+
+<!-- 
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div id="responseMessage" class="mt-3 text-center"></div>
+            </div>
+        </div>
+    </div> -->
 
 
 
@@ -229,8 +253,9 @@
         </div>
     </div>
 
-    <div class="container mt-5">
-        <h4 class="form-label-custom mb-4">Soil Data Input Form</h4>
+    <div class="container mt-5 box">
+        <h3 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Soil Data Input Form</h3>
+        <!-- <h4 class="form-label-custom mb-4">Soil Data Input Form</h4> -->
         <form action="{{ route('PhpSpreadsheetController.storeSoilData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
@@ -273,9 +298,12 @@
 
 
             </div>
-            <button type="submit" class="btn btn-primary mt-4 mb-4">Submit</button>
+            <button type="submit" class="btn btn-primary mt-4">Submit</button>
         </form>
     </div>
+
+    <br>
+    <br>
     @else
     @include('visitors')
     @endif

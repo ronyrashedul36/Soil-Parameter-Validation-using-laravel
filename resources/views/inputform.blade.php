@@ -59,6 +59,8 @@
             width: 100%;
             justify-content: space-around;
         }
+        
+       
     </style>
 </head>
 
@@ -140,8 +142,9 @@
         </div>
     </div>
     @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
-    <div class="container mt-3">
-        <h4 class="mb-4 text-center text-primary">Upazila Nirdesikha</h4>
+    <div class="container mt-3 box">
+        
+        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Upazila Nirdesikha</h4>
         <form action="/submit" method="post" enctype="multipart/form-data">
             @csrf <!-- CSRF token -->
             <div class="row g-3">

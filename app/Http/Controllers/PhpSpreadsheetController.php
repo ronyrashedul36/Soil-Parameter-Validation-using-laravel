@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Spreadsheet;
 use App\Models\SoilPhysicalData;
 
+
 class PhpSpreadsheetController extends Controller
 {
     public function show()
@@ -422,16 +423,20 @@ class PhpSpreadsheetController extends Controller
 
     public function downloadNirdesikaData(Request $request)
     {
+        // Validate the incoming request data
         $validatedData = $request->validate([
-            'division2' => 'nullable|string|max:255',
-            'district2' => 'nullable|string|max:255',
-            'upazila2' => 'nullable|string|max:255',
-            'year2' => 'nullable|numeric',
+            'division' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'upazila' => 'nullable|string|max:255',
+            'year' => 'nullable|numeric',
         ]);
-        $division = $validatedData['division2'];
-        $district = $validatedData['district2'];
-        $upazila = $validatedData['upazila2'];
-        $year = $validatedData['year2'];
+
+        // Query the database based on the filter criteria
+        $division = $validatedData['division'];
+        $district = $validatedData['district'];
+        $upazila = $validatedData['upazila'];
+        $year = $validatedData['year'];
+
         $query = \App\Models\UpazilaNirdesika::query();
 
         if ($division) {
@@ -448,57 +453,138 @@ class PhpSpreadsheetController extends Controller
         }
 
         $data = $query->get();
+
         if ($data->isEmpty()) {
-            // If no data is found, return with a success message
-            return redirect()->back()->with('success', 'No Soil Data Found for the selected criteria!');
+            return redirect()->back()->with('success', 'No Soil Data found for the provided criteria.');
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'No Soil Data found for the provided criteria.'
+            // ]);
         }
-        // Generate CSV content
-        $csvFileName = 'NirdesikaData_' . now()->format('Y_m_d_H_i_s') . '.csv';
-        $headers = ['Division', 'District', 'Upazila', 'year'];
 
-        // Return the response with the CSV file
-        return response()->stream(
-            function () use ($data, $headers) {
-                $handle = fopen('php://output', 'w');
+        // Create a new Spreadsheet instance
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-                // Handle fopen failure
-                if ($handle === false) {
-                    return response()->json(['error' => 'Could not open output stream'], 500);
-                }
+        // Define the headers for the Excel file
+        $headers = [
+            'Division',
+            'District',
+            'Upazila',
+            'Year'
+        ];
 
-                // Add the headers
-                fputcsv($handle, $headers);
+        // Insert headers into the first row
+        $sheet->fromArray($headers, null, 'A1');
 
-                // Add the data rows
-                foreach ($data as $row) {
-                    fputcsv($handle, [
-                        $row->Division,
-                        $row->District,
-                        $row->Upazila,
-                        $row->Year
-                    ]);
-                }
+        // Insert data into the sheet
+        $rowNumber = 2;
+        foreach ($data as $row) {
+            $sheet->fromArray([
+                $row->Division,
+                $row->District,
+                $row->Upazila,
+                $row->Year
+            ], null, 'A' . $rowNumber);
+            $rowNumber++;
+        }
 
-                fclose($handle);
-            },
-            200,
-            [
-                'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
-            ]
-        );
+        // Generate the Excel file and download it
+        $fileName = 'Nirdesikha_data_' . now()->format('Y_m_d_H_i_s') . '.xlsx';
+
+        // Create an Xlsx writer instance using the full namespace
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ]);
     }
+
+    // public function downloadNirdesikaData(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'division2' => 'nullable|string|max:255',
+    //         'district2' => 'nullable|string|max:255',
+    //         'upazila2' => 'nullable|string|max:255',
+    //         'year2' => 'nullable|numeric',
+    //     ]);
+    //     $division = $validatedData['division2'];
+    //     $district = $validatedData['district2'];
+    //     $upazila = $validatedData['upazila2'];
+    //     $year = $validatedData['year2'];
+    //     $query = \App\Models\UpazilaNirdesika::query();
+
+    //     if ($division) {
+    //         $query->where('Division', $division);
+    //     }
+    //     if ($district) {
+    //         $query->where('District', $district);
+    //     }
+    //     if ($upazila) {
+    //         $query->where('Upazila', $upazila);
+    //     }
+    //     if ($year) {
+    //         $query->where('Year', $year);
+    //     }
+
+    //     $data = $query->get();
+    //     if ($data->isEmpty()) {
+    //         // If no data is found, return with a success message
+    //         return redirect()->back()->with('success', 'No Soil Data Found for the selected criteria!');
+    //     }
+    //     // Generate CSV content
+    //     $csvFileName = 'NirdesikaData_' . now()->format('Y_m_d_H_i_s') . '.csv';
+    //     $headers = ['Division', 'District', 'Upazila', 'year'];
+
+    //     // Return the response with the CSV file
+    //     return response()->stream(
+    //         function () use ($data, $headers) {
+    //             $handle = fopen('php://output', 'w');
+
+    //             // Handle fopen failure
+    //             if ($handle === false) {
+    //                 return response()->json(['error' => 'Could not open output stream'], 500);
+    //             }
+
+    //             // Add the headers
+    //             fputcsv($handle, $headers);
+
+    //             // Add the data rows
+    //             foreach ($data as $row) {
+    //                 fputcsv($handle, [
+    //                     $row->Division,
+    //                     $row->District,
+    //                     $row->Upazila,
+    //                     $row->Year
+    //                 ]);
+    //             }
+
+    //             fclose($handle);
+    //         },
+    //         200,
+    //         [
+    //             'Content-Type' => 'text/csv',
+    //             'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
+    //         ]
+    //     );
+    // }
 
     public function retrieveNirdesikaData(Request $request)
     {
+        // Validate the request data
         $validatedData = $request->validate([
             'division' => 'nullable|string|max:255',
             'district' => 'nullable|string|max:255',
             'upazila' => 'nullable|string|max:255',
             'year' => 'nullable|numeric',
         ]);
+
+        // Query the SoilData model based on filters
         $query = \App\Models\UpazilaNirdesika::query();
-        // Apply filters based on the validated data
+
         if (!empty($validatedData['division'])) {
             $query->where('Division', $validatedData['division']);
         }
@@ -517,16 +603,70 @@ class PhpSpreadsheetController extends Controller
 
         // Execute the query and get the results
         $results = $query->get();
-        // dd($results);
-        if (!$results->isEmpty()) {
-            return redirect()->back()->with('success', 'Upazila Nirdesikha Data Found!');
-        } else {
-            return redirect()->back()->with('success', 'No Upazila Nirdesikha Data found for the provided criteria.');
-        }
 
-        // Return the results, for example, as a JSON response
-        return response()->json($results);
+        // If results found, return them in a JSON response
+        if (!$results->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Soil Data Found!',
+                'data' => $results
+            ]);
+        }
+        // If no results found, return a message in a JSON response
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Soil Data found for the provided criteria.',
+                'data' => []
+            ]);
+        }
     }
+
+    // public function retrieveNirdesikaData(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'division' => 'nullable|string|max:255',
+    //         'district' => 'nullable|string|max:255',
+    //         'upazila' => 'nullable|string|max:255',
+    //         'year' => 'nullable|numeric',
+    //     ]);
+    //     $query = \App\Models\UpazilaNirdesika::query();
+    //     // Apply filters based on the validated data
+    //     if (!empty($validatedData['division'])) {
+    //         $query->where('Division', $validatedData['division']);
+    //     }
+
+    //     if (!empty($validatedData['district'])) {
+    //         $query->where('District', $validatedData['district']);
+    //     }
+
+    //     if (!empty($validatedData['upazila'])) {
+    //         $query->where('Upazila', $validatedData['upazila']);
+    //     }
+
+    //     if (!empty($validatedData['year'])) {
+    //         $query->where('Year', $validatedData['year']);
+    //     }
+
+    //     // Execute the query and get the results
+    //     $results = $query->get();
+    //     // dd($results);
+    //     if (!$results->isEmpty()) {
+    //         // return redirect()->back()->with('success', 'Upazila Nirdesikha Data Found!');
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Upazila Nirdesikha Data Found!',
+    //             'data' => $results
+    //         ]);
+    //     } else {
+    //         // return redirect()->back()->with('success', 'No Upazila Nirdesikha Data found for the provided criteria.');
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'No Upazila Nirdesikha Data found for the provided criteria.',
+    //             'data' => []
+    //         ]);
+    //     }
+    // }
     public function requestCount()
     {
         // Assuming you have a model named `Request` or equivalent
@@ -618,21 +758,22 @@ class PhpSpreadsheetController extends Controller
     }
 
 
-    public function download(Request $request)
+    public function downloadSoilReport(Request $request)
     {
+        // Validate the incoming request data
         $validatedData = $request->validate([
-            'division2' => 'nullable|string|max:255',
-            'district2' => 'nullable|string|max:255',
-            'upazila2' => 'nullable|string|max:255',
-            'year2' => 'nullable|numeric',
+            'division' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'upazila' => 'nullable|string|max:255',
+            'year' => 'nullable|numeric',
         ]);
-        // dd($validatedData['division2']);
-        // Query the database based on the filter criteria
 
-        $division = $validatedData['division2'];
-        $district = $validatedData['district2'];
-        $upazila = $validatedData['upazila2'];
-        $year = $validatedData['year2'];
+        // Query the database based on the filter criteria
+        $division = $validatedData['division'];
+        $district = $validatedData['district'];
+        $upazila = $validatedData['upazila'];
+        $year = $validatedData['year'];
+
         $query = \App\Models\SoilData::query();
 
         if ($division) {
@@ -648,73 +789,202 @@ class PhpSpreadsheetController extends Controller
             $query->where('year', $year);
         }
 
-
-
         $data = $query->get();
+
         if ($data->isEmpty()) {
-            // If no data is found, return with a success message
-            return redirect()->back()->with('success', 'No Soil Data Found for the selected criteria!');
+            return redirect()->back()->with('success', 'No Soil Data found for the provided criteria.');
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'No Soil Data found for the provided criteria.'
+            // ]);
         }
-        // Generate CSV content
-        $csvFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
-        $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
 
-        // Return the response with the CSV file
-        return response()->stream(
-            function () use ($data, $headers) {
-                $handle = fopen('php://output', 'w');
+        // Create a new Spreadsheet instance
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-                // Handle fopen failure
-                if ($handle === false) {
-                    return response()->json(['error' => 'Could not open output stream'], 500);
-                }
+        // Define the headers for the Excel file
+        $headers = [
+            'Division',
+            'District',
+            'Upazila',
+            'fid',
+            'smpl_no',
+            'mu',
+            'land_type',
+            'soil_series',
+            'soil_group',
+            'texture',
+            'ec',
+            'ph',
+            'ea',
+            'om',
+            'n',
+            'po',
+            'pb',
+            'k',
+            's',
+            'zn',
+            'b',
+            'ca',
+            'mg',
+            'cu',
+            'fe',
+            'mn',
+            'upz_code',
+            'year'
+        ];
 
-                // Add the headers
-                fputcsv($handle, $headers);
+        // Insert headers into the first row
+        $sheet->fromArray($headers, null, 'A1');
 
-                // Add the data rows
-                foreach ($data as $row) {
-                    fputcsv($handle, [
-                        $row->division,
-                        $row->district,
-                        $row->upazila,
-                        $row->fid,
-                        $row->smpl_no,
-                        $row->mu,
-                        $row->land_type,
-                        $row->soil_series,
-                        $row->soil_group,
-                        $row->texture,
-                        $row->ec,
-                        $row->ph,
-                        $row->ea,
-                        $row->om,
-                        $row->n,
-                        $row->po,
-                        $row->pb,
-                        $row->k,
-                        $row->s,
-                        $row->zn,
-                        $row->b,
-                        $row->ca,
-                        $row->mg,
-                        $row->cu,
-                        $row->fe,
-                        $row->mn,
-                        $row->upz_code,
-                        $row->year
-                    ]);
-                }
+        // Insert data into the sheet
+        $rowNumber = 2;
+        foreach ($data as $row) {
+            $sheet->fromArray([
+                $row->division,
+                $row->district,
+                $row->upazila,
+                $row->fid,
+                $row->smpl_no,
+                $row->mu,
+                $row->land_type,
+                $row->soil_series,
+                $row->soil_group,
+                $row->texture,
+                $row->ec,
+                $row->ph,
+                $row->ea,
+                $row->om,
+                $row->n,
+                $row->po,
+                $row->pb,
+                $row->k,
+                $row->s,
+                $row->zn,
+                $row->b,
+                $row->ca,
+                $row->mg,
+                $row->cu,
+                $row->fe,
+                $row->mn,
+                $row->upz_code,
+                $row->year
+            ], null, 'A' . $rowNumber);
+            $rowNumber++;
+        }
 
-                fclose($handle);
-            },
-            200,
-            [
-                'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
-            ]
-        );
+        // Generate the Excel file and download it
+        $fileName = 'soil_data_' . now()->format('Y_m_d_H_i_s') . '.xlsx';
+
+        // Create an Xlsx writer instance using the full namespace
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ]);
     }
+
+    // public function download(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'division2' => 'nullable|string|max:255',
+    //         'district2' => 'nullable|string|max:255',
+    //         'upazila2' => 'nullable|string|max:255',
+    //         'year2' => 'nullable|numeric',
+    //     ]);
+    //     // dd($validatedData['division2']);
+    //     // Query the database based on the filter criteria
+
+    //     $division = $validatedData['division2'];
+    //     $district = $validatedData['district2'];
+    //     $upazila = $validatedData['upazila2'];
+    //     $year = $validatedData['year2'];
+    //     $query = \App\Models\SoilData::query();
+
+    //     if ($division) {
+    //         $query->where('division', $division);
+    //     }
+    //     if ($district) {
+    //         $query->where('district', $district);
+    //     }
+    //     if ($upazila) {
+    //         $query->where('upazila', $upazila);
+    //     }
+    //     if ($year) {
+    //         $query->where('year', $year);
+    //     }
+
+
+
+    //     $data = $query->get();
+    //     if ($data->isEmpty()) {
+    //         // If no data is found, return with a success message
+    //         return redirect()->back()->with('success', 'No Soil Data Found for the selected criteria!');
+    //     }
+    //     // Generate CSV content
+    //     $csvFileName = 'data_export_' . now()->format('Y_m_d_H_i_s') . '.csv';
+    //     $headers = ['Division', 'District', 'Upazila', 'fid', 'smpl_no', 'mu', 'land_type', 'soil_series', 'soil_group', 'texture', 'ec', 'ph', 'ea', 'om', 'n', 'po', 'pb', 'k', 's', 'zn', 'b', 'ca', 'mg', 'cu', 'fe', 'mn', 'upz_code', 'year'];
+
+    //     // Return the response with the CSV file
+    //     return response()->stream(
+    //         function () use ($data, $headers) {
+    //             $handle = fopen('php://output', 'w');
+
+    //             // Handle fopen failure
+    //             if ($handle === false) {
+    //                 return response()->json(['error' => 'Could not open output stream'], 500);
+    //             }
+
+    //             // Add the headers
+    //             fputcsv($handle, $headers);
+
+    //             // Add the data rows
+    //             foreach ($data as $row) {
+    //                 fputcsv($handle, [
+    //                     $row->division,
+    //                     $row->district,
+    //                     $row->upazila,
+    //                     $row->fid,
+    //                     $row->smpl_no,
+    //                     $row->mu,
+    //                     $row->land_type,
+    //                     $row->soil_series,
+    //                     $row->soil_group,
+    //                     $row->texture,
+    //                     $row->ec,
+    //                     $row->ph,
+    //                     $row->ea,
+    //                     $row->om,
+    //                     $row->n,
+    //                     $row->po,
+    //                     $row->pb,
+    //                     $row->k,
+    //                     $row->s,
+    //                     $row->zn,
+    //                     $row->b,
+    //                     $row->ca,
+    //                     $row->mg,
+    //                     $row->cu,
+    //                     $row->fe,
+    //                     $row->mn,
+    //                     $row->upz_code,
+    //                     $row->year
+    //                 ]);
+    //             }
+
+    //             fclose($handle);
+    //         },
+    //         200,
+    //         [
+    //             'Content-Type' => 'text/csv',
+    //             'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
+    //         ]
+    //     );
+    // }
 
     public function retrieveData(Request $request)
     {

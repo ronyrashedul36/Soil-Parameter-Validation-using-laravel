@@ -6,7 +6,7 @@
 @include('navigation')
 
 @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
-<div class="container mt-2">
+<div class="container mt-2 box">
     <h4 class="mb-5" style="font-family: 'Times New Roman', Times, serif; text-align: center;">Soil Data Input Form</h4>
     <form action="{{route('PhpSpreadsheetController.uploadSoilPhysicalData')}}" method="POST">
         @csrf

@@ -8,6 +8,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        .form-label-custom {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
         .message-icon {
             position: relative;
             cursor: pointer;
@@ -26,6 +32,21 @@
             min-width: 200px;
             /* Adjust width as needed */
             z-index: 1050;
+        }
+
+        .box {
+            border: 2px solid #007bff;
+            /* Change the color as needed */
+            border-radius: 8px;
+            /* Rounded corners */
+            padding: 20px;
+            /* Space inside the box */
+            margin-top: 20px;
+            /* Space above the box */
+            background-color: #f8f9fa;
+            /* Light background color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Optional shadow for depth */
         }
     </style>
 </head>

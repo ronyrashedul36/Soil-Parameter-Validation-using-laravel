@@ -147,10 +147,58 @@
         </div>
         @endif
 
+        <div class="alert alert-success" role="alert" id="success-alert" style="display:none">
+
+        </div>
+
 
     </div>
 
-    <div class="container mt-2">
+    <div class="container mt-2 box">
+        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Search & Download Report</h4>
+        <form action="" method="POST" id="uploadForm1" enctype="multipart/form-data">
+            @csrf
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="division" class="form-label">Division </label>
+                    <select class="form-select" id="division" name="division">
+                        <option value="">Select Division</option>
+                        <option value="Dhaka">Dhaka</option>
+                        <option value="Chattogram">Chattogram</option>
+                        <option value="Khulna">Khulna</option>
+                        <option value="Rajshahi">Rajshahi</option>
+                        <option value="Barishal">Barishal</option>
+                        <option value="Sylhet">Sylhet</option>
+                        <option value="Rangpur">Rangpur</option>
+                        <option value="Mymensingh">Mymensingh</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="district" class="form-label">District </label>
+                    <select class="form-select" id="district" name="district">
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="upazila" class="form-label">Upazila </label>
+                    <select class="form-select" id="upazila" name="upazila">
+                        <option value="">Select Upazila</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="year" class="form-label">Year </label>
+                    <input type="number" class="form-control" id="year" name="year" min="1900" max="2500" step="1">
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                <button type="button" class="btn btn-primary mx-2" onclick="performSearch()">Search</button>
+                <button type="button" class="btn btn-primary mx-2" onclick="performDownload()">Download</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- <div class="container mt-2">
         <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Search Report</h4>
         <form action="{{ route('PhpSpreadsheetController.retrieveNirdesikaData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
@@ -235,8 +283,106 @@
                 <button type="submit" class="btn btn-primary mx-2">Download</button>
             </div>
         </form>
-    </div>
+    </div> -->
 
+
+    <script>
+        function performSearch() {
+            var division = document.getElementById('division').value;
+            var district = document.getElementById('district').value;
+            var upazila = document.getElementById('upazila').value;
+            var year = document.getElementById('year').value;
+
+            var formData = {
+                division: division,
+                district: district,
+                upazila: upazila,
+                year: year,
+                _token: '{{ csrf_token() }}'
+            };
+
+            $.ajax({
+                url: "{{ route('PhpSpreadsheetController.retrieveNirdesikaData') }}",
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Display message for 5 seconds
+                    var alertDiv = document.getElementById('success-alert');
+                    alertDiv.innerHTML = response.message;
+
+                    if (response.message === 'No Data found for the provided criteria.') {
+                        alertDiv.className = 'alert alert-danger';
+                    } else {
+                        alertDiv.className = 'alert alert-success';
+                    }
+
+                    alertDiv.style.display = 'block';
+
+                    setTimeout(function() {
+                        alertDiv.style.display = 'none';
+                    }, 5000);
+                    if (response.success) {
+                        console.log(response.data); // Data available in response.data
+                    }
+                },
+                error: function(xhr) {
+                    var alertDiv = document.getElementById('success-alert');
+                    alertDiv.className = 'alert alert-danger';
+                    alertDiv.innerHTML = 'An error occurred. Please try again.';
+                    alertDiv.style.display = 'block';
+                    setTimeout(function() {
+                        alertDiv.style.display = 'none';
+                    }, 5000);
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function performDownload() {
+            var division = document.getElementById('division').value;
+            var district = document.getElementById('district').value;
+            var upazila = document.getElementById('upazila').value;
+            var year = document.getElementById('year').value;
+
+            // Create a form element
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ route('PhpSpreadsheetController.downloadNirdesikaData') }}"; // Updated route name
+
+            // Add CSRF token input field
+            var csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}'; // Laravel CSRF token
+            form.appendChild(csrfInput);
+
+            // Add other form fields dynamically
+            var fields = {
+                division: division,
+                district: district,
+                upazila: upazila,
+                year: year
+            };
+
+            for (var key in fields) {
+                if (fields.hasOwnProperty(key)) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = fields[key];
+                    form.appendChild(input);
+                }
+            }
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+
+            // Remove the form from the document after submission
+            document.body.removeChild(form);
+        }
+    </script>
 
     @include('institutionlogo')
     <script type="text/javascript">

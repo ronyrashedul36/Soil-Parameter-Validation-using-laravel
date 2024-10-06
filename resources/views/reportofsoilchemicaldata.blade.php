@@ -20,6 +20,21 @@
 
 
     <style>
+        .box {
+            border: 2px solid #007bff;
+            /* Change the color as needed */
+            border-radius: 8px;
+            /* Rounded corners */
+            padding: 20px;
+            /* Space inside the box */
+            margin-top: 20px;
+            /* Space above the box */
+            background-color: #f8f9fa;
+            /* Light background color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Optional shadow for depth */
+        }
+
         body {
             display: flex;
             flex-direction: column;
@@ -152,9 +167,9 @@
         </div>
 
     </div>
-    <!-- {{ route('PhpSpreadsheetController.retrieveData') }} -->
-    <div class="container mt-2">
-        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Search Report</h4>
+    
+    <div class="container mt-2 box">
+        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Search & Download Report</h4>
         <form action="" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
@@ -221,7 +236,7 @@
                     var alertDiv = document.getElementById('success-alert');
                     alertDiv.innerHTML = response.message;
 
-                    if(response.message === 'No Soil Data found for the provided criteria.') {
+                    if (response.message === 'No Soil Data found for the provided criteria.') {
                         alertDiv.className = 'alert alert-danger';
                     } else {
                         alertDiv.className = 'alert alert-success';
@@ -254,25 +269,47 @@
 
     <script>
         function performDownload() {
-            // Logic to handle download functionality
-            var formData = new FormData(document.getElementById('uploadForm1'));
+            var division = document.getElementById('division').value;
+            var district = document.getElementById('district').value;
+            var upazila = document.getElementById('upazila').value;
+            var year = document.getElementById('year').value;
 
-            // You can use AJAX here to trigger file download
-            console.log("Download function called with form data: ", formData);
-            // Example AJAX request for download
-            /*
-            $.ajax({
-                url: '/download-route',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    // Trigger file download here
-                    console.log(response);
+            // Create a form element
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ route('PhpSpreadsheetController.downloadSoilReport') }}"; // Updated route name
+
+            // Add CSRF token input field
+            var csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}'; // Laravel CSRF token
+            form.appendChild(csrfInput);
+
+            // Add other form fields dynamically
+            var fields = {
+                division: division,
+                district: district,
+                upazila: upazila,
+                year: year
+            };
+
+            for (var key in fields) {
+                if (fields.hasOwnProperty(key)) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = fields[key];
+                    form.appendChild(input);
                 }
-            });
-            */
+            }
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+
+            // Remove the form from the document after submission
+            document.body.removeChild(form);
         }
     </script>
 
