@@ -24,12 +24,13 @@
         #upazila_nirdesikas td {
             text-align: center;
             vertical-align: middle;
-            
+
             /* Optional: Vertically center content as well */
         }
+
         .form-label-custom {
             font-weight: bold;
-            
+
         }
 
         body {
@@ -126,8 +127,10 @@
                                 Soil Chemical Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
                                 <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
+                                @endif
                                 <a class="dropdown-item" href="/soilchemicaldata">Soil Chemical Data</a>
                                 <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                             </div>
@@ -139,7 +142,9 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/demo">Nirdesika Management</a>
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/inputform">Upload</a>
+                                @endif
                                 <a class="dropdown-item" href="/upazilanirdesikareport">Report</a>
                             </div>
                         </li>
@@ -149,7 +154,9 @@
                                 Soil Physical Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/soilPhysicalData">Upload Data</a>
+                                @endif
                                 <a class="dropdown-item" href="/soilPhysicalDataAll">Soil Physical Data</a>
                             </div>
                         </li>
@@ -173,7 +180,7 @@
         </div>
         @endif
         <div class="flex-container">
-        <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">List of Upazila Nirdesika</h4>
+            <h4 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">List of Upazila Nirdesika</h4>
             <!-- <h4>List of Upazila Nirdesika</h4> -->
         </div>
 

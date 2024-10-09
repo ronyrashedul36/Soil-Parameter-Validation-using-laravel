@@ -96,8 +96,10 @@
                                 Soil Chemical Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
                                 <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
+                                @endif
                                 <a class="dropdown-item" href="/soilchemicaldata">Soil Chemical Data</a>
                                 <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                             </div>
@@ -108,7 +110,9 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/demo">Nirdesika Management</a>
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/inputform">Upload</a>
+                                @endif
                                 <a class="dropdown-item" href="/upazilanirdesikareport">Report</a>
                             </div>
                         </li>
@@ -117,7 +121,9 @@
                                 Soil Physical Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/soilPhysicalData">Upload Data</a>
+                                @endif
                                 <a class="dropdown-item" href="/soilPhysicalDataAll">Soil Physical Data</a>
                             </div>
                         </li>
@@ -164,7 +170,7 @@
     <br>
     <br>
 
-    <script>
+    <!-- <script>
         // Function to fetch the uploaded upazilas from Laravel
         fetch('/getUpazilaNirdesikhaCount')
             .then(response => response.json())
@@ -176,13 +182,14 @@
                 const nirdesikhaPieChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: ['Total No. of Upazila', 'Uploaded No. of Upazila'], // Labels for the pie chart
+                        labels: ['Not Uploaded Upazila', 'Uploaded Upazila'], // Labels for the pie chart
                         datasets: [{
                             label: 'No. of Upazila',
                             data: [totalDistinctUpazilas, uploadedUpazilas], // Data for the chart
                             backgroundColor: [
-                                'rgba(75, 192, 192, 0.2)', // Color for total upazilas
-                                'rgba(255, 99, 132, 0.2)' // Color for uploaded upazilas
+                                'rgba(255, 0, 0)', // red color
+                                'rgba(0, 192, 0, 0.2)' // Color for total upazilas
+                                // 'rgba(192, 0, 0, 0.2)' // Color for uploaded upazilas
                             ],
                             borderColor: [
                                 'rgba(75, 192, 192, 1)', // Border color for total upazilas
@@ -211,9 +218,74 @@
                 console.error('Error fetching data:', error);
                 alert('There was an issue fetching the Nirdesikha data. Please try again later.'); // User-friendly error message
             });
-    </script>
+    </script> -->
+
 
     <script>
+        // Function to fetch the uploaded upazilas from Laravel
+        fetch('/getUpazilaNirdesikhaCount')
+            .then(response => response.json())
+            .then(data => {
+                const totalUpazilas = 495; // Total distinct upazilas in Bangladesh
+                const uploadedUpazilas = data.totalDistinctUpazilaNirdesikha; // Uploaded upazilas
+                const notUploadedUpazilas = totalUpazilas - uploadedUpazilas; // Calculate remaining upazilas
+
+                // Calculate percentages and round them to whole numbers
+                const uploadedPercentage = Math.round((uploadedUpazilas / totalUpazilas) * 100);
+                const notUploadedPercentage = Math.round((notUploadedUpazilas / totalUpazilas) * 100);
+
+                const ctx = document.getElementById('nirdesikhaPieChart').getContext('2d');
+
+                const nirdesikhaPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Not Uploaded Upazila', 'Uploaded Upazila'], // Labels for the pie chart
+                        datasets: [{
+                            label: 'Percentage of Upazilas',
+                            data: [notUploadedPercentage, uploadedPercentage], // Percentages for the chart
+                            backgroundColor: [
+                                'rgba(255, 0, 0)', // Red color for not uploaded upazilas
+                                'rgba(0, 192, 0, 0.2)' // Green color for uploaded upazilas
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)', // Border color for not uploaded upazilas
+                                'rgba(255, 99, 132, 1)' // Border color for uploaded upazilas
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, // Enable responsiveness
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom', // Position of the legend
+                                align: 'middle',
+                                labels: {
+                                    usePointStyle: true, // Use point style for labels
+                                    padding: 20 // Add padding between legend items
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        // Display percentage with % symbol
+                                        return tooltipItem.label + ': ' + tooltipItem.raw + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('There was an issue fetching the Nirdesikha data. Please try again later.'); // User-friendly error message
+            });
+    </script>
+
+
+    <!-- <script>
         // Function to fetch the uploaded upazilas from Laravel
         fetch('/getSoilChemicalDataCount')
             .then(response => response.json())
@@ -224,13 +296,13 @@
                 const soilPieChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: ['Total No. of Upazila', 'Uploaded No. of Upazila'], // Labels for the pie chart
+                        labels: ['Not Uploaded Upazila', 'Uploaded Upazila'], // Labels for the pie chart
                         datasets: [{
                             label: 'No. of Upazila',
                             data: [totalDistinctUpazilas, uploadedUpazilas], // Data for the chart
                             backgroundColor: [
-                                'rgba(75, 192, 192, 0.2)', // Color for total upazilas
-                                'rgba(255, 99, 132, 0.2)' // Color for uploaded upazilas
+                                'rgba(255, 0, 0)', // red color
+                                'rgba(0, 192, 0, 0.2)' // Color for total upazilas
                             ],
                             borderColor: [
                                 'rgba(75, 192, 192, 1)', // Border color for total upazilas
@@ -256,8 +328,67 @@
                 });
             })
             .catch(error => console.error('Error fetching data:', error));
-    </script>
+    </script> -->
 
+    <script>
+        // Function to fetch the uploaded upazilas from Laravel
+        fetch('/getSoilChemicalDataCount')
+            .then(response => response.json())
+            .then(data => {
+                const totalUpazilas = 495; // Total distinct upazilas in Bangladesh
+                const uploadedUpazilas = data.totalDistinctUpazilas; // Fetch uploaded upazila count
+                const notUploadedUpazilas = totalUpazilas - uploadedUpazilas; // Calculate remaining upazilas
+
+                // Calculate percentages and round them to whole numbers
+                const uploadedPercentage = Math.round((uploadedUpazilas / totalUpazilas) * 100);
+                const notUploadedPercentage = Math.round((notUploadedUpazilas / totalUpazilas) * 100);
+
+                const ctx = document.getElementById('soilPieChart').getContext('2d');
+
+                const soilPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Not Uploaded Upazila', 'Uploaded Upazila'], // Labels for the pie chart
+                        datasets: [{
+                            label: 'Percentage of Upazilas',
+                            data: [notUploadedPercentage, uploadedPercentage], // Percentages for the chart
+                            backgroundColor: [
+                                'rgba(255, 0, 0)', // Red color for not uploaded upazilas
+                                'rgba(0, 192, 0, 0.2)' // Green color for uploaded upazilas
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)', // Border color for not uploaded upazilas
+                                'rgba(255, 99, 132, 1)' // Border color for uploaded upazilas
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: false, // Disable responsiveness to honor canvas size
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom', // Position of the legend
+                                align: 'middle',
+                                labels: {
+                                    usePointStyle: true, // Use point style for labels
+                                    padding: 20 // Add padding between legend items
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        // Display percentage with % symbol
+                                        return tooltipItem.label + ': ' + tooltipItem.raw + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
 
 
 

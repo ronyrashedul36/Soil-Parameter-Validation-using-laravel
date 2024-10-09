@@ -136,8 +136,10 @@
                                 Soil Chemical Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/soilvalidation">Data Validate & Import</a>
                                 <a class="dropdown-item" href="/soilsinglerowdataentry">Soil Data Entry</a>
+                                @endif
                                 <a class="dropdown-item" href="/soilchemicaldata">Soil Chemical Data</a>
                                 <a class="dropdown-item" href="/reportofsoilchemicaldata">Report</a>
                             </div>
@@ -149,7 +151,9 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="/demo">Nirdesika Management</a>
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/inputform">Upload</a>
+                                @endif
                                 <a class="dropdown-item" href="/upazilanirdesikareport">Report</a>
                             </div>
                         </li>
@@ -159,7 +163,9 @@
                                 Soil Physical Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
                                 <a class="dropdown-item" href="/soilPhysicalData">Upload Data</a>
+                                @endif
                                 <a class="dropdown-item" href="/soilPhysicalDataAll">Soil Physical Data</a>
                             </div>
                         </li>
@@ -206,7 +212,7 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <button id="downloadButton" name="download" value="download" class="btn btn-success btn-block" onclick="downloadFile()" style="display:none">Download File</button>
@@ -229,7 +235,7 @@
         </div>
     </div> -->
 
-<!-- 
+    <!-- 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
