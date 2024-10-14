@@ -182,7 +182,7 @@
         </nav>
 
     </div>
-    @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
+    @if (Auth::check() && Auth::user()->role == 'super admin')
     <div class="container">
         <div class="row">
             <div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: 10px; display: flex; justify-content: flex-start;">
@@ -258,7 +258,8 @@
             </div>
         </div>
     </div>
-
+    @endif
+    @if (Auth::check() && (Auth::user()->role == 'admin' || Auth::user()->role == 'super admin'))
     <div class="container mt-5 box">
         <h3 class="form-label-custom mb-4" style="font-family: 'Times New Roman', Times, serif;">Soil Data Input Form</h3>
         <!-- <h4 class="form-label-custom mb-4">Soil Data Input Form</h4> -->
@@ -297,8 +298,8 @@
                 </div>
                 <div class="d-flex align-items-center col-md-5">
                     <div class="col-md-10">
-                        <label for="upz_code" class="form-label">Upload Excel file</label>
-                        <input type="file" class="form-control-file" id="excel" name="excel" accept=".xls|.xlsx">
+                        <label for="upz_code" class="form-label">Upload Excel file <span style="color:red">*</span></label>
+                        <input type="file" class="form-control-file" id="excel" name="excel" accept=".xls|.xlsx" required>
                     </div>
                 </div>
 

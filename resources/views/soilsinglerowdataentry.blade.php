@@ -203,8 +203,8 @@
         <form action="{{ route('PhpSpreadsheetController.storeSoilData') }}" method="POST" id="uploadForm1" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="division" class="form-label">Division <span style="color:red">*</span></label>
+                <div class="col-md-4 mb-2">
+                    <label for="division" class="form-label mr-4">Division <span style="color:red">*</span></label>
                     <select class="form-select" id="division" name="division" required>
                         <option value="">Select Division</option>
                         <option value="Dhaka">Dhaka</option>
@@ -217,19 +217,19 @@
                         <option value="Mymensingh">Mymensingh</option>
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <label for="district" class="form-label">District <span style="color:red">*</span></label>
+                <div class="col-md-4 mb-2">
+                    <label for="district" class="form-label mr-4">District <span style="color:red">*</span></label>
                     <select class="form-select" id="district" name="district" required>
                         <option value="">Select District</option>
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <label for="upazila" class="form-label">Upazila <span style="color:red">*</span></label>
+                <div class="col-md-4 mb-2">
+                    <label for="upazila" class="form-label mr-4">Upazila <span style="color:red">*</span></label>
                     <select class="form-select" id="upazila" name="upazila" required>
                         <option value="">Select Upazila</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <!-- <div class="col-md-4">
                     <label for="year" class="form-label">Year <span style="color:red">*</span></label>
                     <input type="number" class="form-control" id="year" name="year" min="1900" max="2500" step="1" required>
                 </div>
@@ -328,11 +328,188 @@
                 <div class="col-md-4">
                     <label for="upz_code" class="form-label">Upazila Code</label>
                     <input type="text" class="form-control" id="upz_code" name="upz_code">
+                </div> -->
+
+                <div class="col-md-1 mb-2">
+                    <label for="year" class="form-label">Year <span style="color:red">*</span></label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="number" class="form-control" id="year" name="year" min="1900" max="2500" step="1" required>
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="fid" class="form-label">FID</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="fid" name="fid">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="smpl_no" class="form-label">Sample No</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="smpl_no" name="smpl_no">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="mu" class="form-label">MU</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="mu" name="mu">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="land_type" class="form-label">Land Type</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="land_type" name="land_type">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="soil_series" class="form-label">Soil Series</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="soil_series" name="soil_series">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="soil_group" class="form-label">Soil Group</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="soil_group" name="soil_group">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="texture" class="form-label">Texture</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="texture" name="texture">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="ec" class="form-label">EC</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="ec" name="ec">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="ph" class="form-label">pH</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="ph" name="ph">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="ea" class="form-label">EA</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="ea" name="ea">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="om" class="form-label">OM</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="om" name="om">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="n" class="form-label">N</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="n" name="n">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="po" class="form-label">Po</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="po" name="po">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="pb" class="form-label">Pb</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="pb" name="pb">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="k" class="form-label">K</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="k" name="k">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="s" class="form-label">S</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="s" name="s">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="zn" class="form-label">Zn</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="zn" name="zn">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="b" class="form-label">B</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="b" name="b">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="ca" class="form-label">Ca</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="ca" name="ca">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="mg" class="form-label">Mg</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="mg" name="mg">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="cu" class="form-label">Cu</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="cu" name="cu">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="fe" class="form-label">Fe</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="fe" name="fe">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="mn" class="form-label">Mn</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="mn" name="mn">
+                </div>
+
+                <div class="col-md-1 mb-2">
+                    <label for="upz_code" class="form-label">Upazila Code</label>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" class="form-control" id="upz_code" name="upz_code">
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-4">Submit</button>
-            <button type="" id="SendRequestToApprove" class="btn btn-primary mt-4" title="Send Request to approve">Send Request</button>
+            <button type="submit" class="btn btn-primary mt-2">Submit</button>
+            <button type="" id="SendRequestToApprove" class="btn btn-primary mt-2" title="Send Request to approve">Send Request</button>
         </form>
+
+
     </div>
     <br>
     <br>

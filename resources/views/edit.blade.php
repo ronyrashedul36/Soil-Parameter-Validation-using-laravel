@@ -313,6 +313,7 @@
                 };
 
                 const upazilasByDistrict = {
+                    // Dhaka Division
                     'Dhaka': ['Dhaka North City Corporation', 'Dhaka South City Corporation', 'Dhamrai', 'Dohar', 'Keraniganj', 'Nawabganj', 'Savar'],
                     'Faridpur': ['Alfadanga', 'Bhanga', 'Boalmari', 'Char Bhadrasan', 'Faridpur Sadar', 'Madhukhali', 'Nagarkanda', 'Sadarpur', 'Saltha'],
                     'Gazipur': ['Gazipur City Corporation', 'Gazipur Sadar', 'Kaliakair', 'Kaliganj', 'Kapasia', 'Sreepur'],
@@ -326,7 +327,21 @@
                     'Rajbari': ['Balia Kandi', 'Goalandaghat', 'Kalukhali', 'Pangsha', 'Rajbari Sadar'],
                     'Shariatpur': ['Bhedarganj', 'Damudya', 'Gosairhat', 'Naria', 'Shariatpur Sadar', 'Zanjira'],
                     'Tangail': ['Basail', 'Bhuapur', 'Delduar', 'Dhanbari', 'Ghatail', 'Gopalpur', 'Kalihati', 'Madhupur', 'Mirzapur', 'Nagarpur', 'Sakhipur', 'Tangail Sadar'],
-                    
+                    //Chattogram Division
+                    'Bandarban' : ['Alikadam', 'Bandarban Sadar', 'Lama', 'Naikhongchhari', 'Rowangchhari', 'Ruma', 'Thanchi'],
+                    'Brahmanbaria' : ['Akhaura', 'Ashuganj', 'Banchharampur', 'Bijoynagar', 'Brahmanbaria Sadar', 'Kasba', 'Nabinagar', 'Nasirnagar', 'Sarail'],
+                    'Chandpur': ['Chandpur Sadar', 'Faridganj', 'Haim Char', 'Hajiganj', 'Kachua', 'Matlab Dakshin', 'Matlab Uttar', 'Shahrasti'],
+                    'Chattogram' : ['Anowara', 'Banshkhali', 'Boalkhali', 'Chandanaish', 'Chattogram City Corporation', 'Fatikchhari', 'Hathazari', 'Karnaphuli', 'Lohagara', 'Mirsharai', 'Patiya', 'Rangunia', 'Raozan', 'Sandwip', 'Satkania', 'Sitakunda'],
+                    'Comilla' : ['Barura', 'Brahman Para', 'Burichang', 'Chandina', 'Chauddagram', 'Cumilla Adarsha Sadar', 'Cumilla Sadar Dakshin', 'Daudkandi', 'Debidwar', 'Homna', 'Laksam', 'Lalmai', 'Manoharganj', 'Meghna', 'Muradnagar', 'Nangalkot', 'Titas'],
+                    'Coxs Bazar' : ['Chakaria', 'Cox\'s Bazar Sadar', 'Kutubdia', 'Maheshkhali', 'Pekua', 'Ramu', 'Teknaf', 'Ukhia'],
+                    'Feni': ['Chhagalnaiya', 'Daganbhuiyan', 'Feni Sadar', 'Fulgazi', 'Parshuram', 'Sonagazi'],
+                    'Khagrachhari' : ['Dighinala', 'Guimara', 'Khagrachhari Sadar', 'Lakshmichhari', 'Mahalchhari', 'Manikchhari', 'Matiranga', 'Panchhari', 'Ramgarh'],
+                    'Lakshmipur' : ['Kamalnagar', 'Lakshmipur Sadar', 'Ramganj', 'Ramgati', 'Roypur'],
+                    'Noakhali' : ['Begumganj', 'Chatkhil', 'Companiganj', 'Hatiya', 'Kabirhat', 'Noakhali Sadar (Sudharam)', 'Senbagh', 'Sonaimuri', 'Subarnachar'],
+                    'Rangamati' : ['Baghai Chhari', 'Barkal', 'Belai Chhari', 'Jurai Chhari', 'Kaptai', 'Kawkhali (Betbunia)', 'Langadu', 'Naniarchar', 'Rajasthali', 'Rangamati Sadar'],
+
+
+
                 };
 
                 // Handle division selection change
